@@ -43,13 +43,13 @@
           <p class="text-slate-400 text-[11.5px] mt-1 font-light">Ravi de vous revoir ! Connectez-vous à votre compte.</p>
         </div>
 
-        <form action="{{ route('login') }}" method="POST" class="space-y-4">
+        <form action="{{ route('check_user') }}" method="POST" class="space-y-4">
           @csrf
           <div class="space-y-1">
             <label class="text-[10.5px] font-semibold text-slate-500 uppercase tracking-wider">Adresse Email</label>
             <div class="relative flex items-center">
               <i class="fa-solid fa-envelope absolute left-3.5 text-slate-400 text-[11px]"></i>
-              <input type="email" name="email" required placeholder="exemple@domaine.com" 
+              <input type="email" name="email" value="{{old('email')}}"  placeholder="exemple@domaine.com" 
                      class="w-full bg-slate-50 border border-slate-100 focus:border-forest-500 rounded-xl pl-10 pr-4 py-2.5 text-[12px] focus:outline-none transition-all placeholder-slate-400 font-medium text-slate-800">
             </div>
           </div>
