@@ -14,3 +14,5 @@ Route::get('/register' , function(){
 })->name('register');
 
 Route::post('/login', [AuthController::class, 'check'])->name('check_user');
+
+Route::post('/register' , [AuthController::class , 'save'])->name('save.user');

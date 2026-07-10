@@ -90,13 +90,13 @@
           <p class="text-slate-400 text-[11.5px] mt-1 font-light">Rejoignez-nous pour planifier votre prochaine aventure.</p>
         </div>
 
-        <form action="{{ route('register') }}" method="POST" class="space-y-3.5">
+        <form action="{{route('save.user')}}" method="POST" class="space-y-3.5">
           @csrf
           <div class="space-y-1">
             <label class="text-[10.5px] font-semibold text-slate-500 uppercase tracking-wider">Nom Complet</label>
             <div class="relative flex items-center">
               <i class="fa-solid fa-user absolute left-3.5 text-slate-400 text-[11px]"></i>
-              <input type="text" name="name" required placeholder="Ahmed Alami" 
+              <input type="text" name="name" value="{{old('name')}}"  placeholder="Ahmed Alami" 
                      class="w-full bg-slate-50 border border-slate-100 focus:border-forest-500 rounded-xl pl-10 pr-4 py-2.5 text-[12px] focus:outline-none transition-all placeholder-slate-400 font-medium text-slate-800">
             </div>
           </div>
@@ -105,7 +105,7 @@
             <label class="text-[10.5px] font-semibold text-slate-500 uppercase tracking-wider">Adresse Email</label>
             <div class="relative flex items-center">
               <i class="fa-solid fa-envelope absolute left-3.5 text-slate-400 text-[11px]"></i>
-              <input type="email" name="email" required placeholder="exemple@domaine.com" 
+              <input type="email" name="email" value="{{old('email')}}"  placeholder="exemple@domaine.com" 
                      class="w-full bg-slate-50 border border-slate-100 focus:border-forest-500 rounded-xl pl-10 pr-4 py-2.5 text-[12px] focus:outline-none transition-all placeholder-slate-400 font-medium text-slate-800">
             </div>
           </div>
@@ -114,7 +114,7 @@
             <label class="text-[10.5px] font-semibold text-slate-500 uppercase tracking-wider">Mot de passe</label>
             <div class="relative flex items-center">
               <i class="fa-solid fa-lock absolute left-3.5 text-slate-400 text-[11px]"></i>
-              <input type="password" name="password" required placeholder="Minimum 8 caractères" 
+              <input type="password" name="password" value="{{old('password')}}"  placeholder="Minimum 8 caractères" 
                      class="w-full bg-slate-50 border border-slate-100 focus:border-forest-500 rounded-xl pl-10 pr-4 py-2.5 text-[12px] focus:outline-none transition-all placeholder-slate-400 font-medium text-slate-800">
             </div>
           </div>
