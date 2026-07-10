@@ -160,7 +160,7 @@
       <div class="h-[1px] bg-slate-100 my-1"></div>
 
       <a href="{{ route('logout') }}" 
-         class="flex items-center gap-2.5 px-4 py-2 text-[12px] text-red-500 hover:bg-red-50/50 font-medium transition-colors">
+         class="flex items-center rounded-lg gap-2.5 px-4 py-2 text-[12px] text-red-500 hover:bg-red-50/50 font-medium transition-colors">
         <i class="fa-solid fa-arrow-right-from-bracket text-[11px]"></i>
         Déconnexion
       </a>
