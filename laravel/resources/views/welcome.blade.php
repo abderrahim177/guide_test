@@ -28,16 +28,19 @@
 
     <!-- Search bar -->
     <div class="mt-10 w-full max-w-2xl bg-white/95 backdrop-blur-xl rounded-2xl shadow-float p-2 flex flex-col sm:flex-row items-stretch gap-2">
+
       <div class="flex items-center gap-3 flex-1 px-4 py-3 sm:border-r border-slate-100">
         <i class="fa-solid fa-location-dot text-forest-500 text-[13px]"></i>
         <div class="text-left w-full">
           <label class="block text-[9px] uppercase tracking-wider text-slate-400 font-semibold">Location</label>
+
           <select class="text-[12.5px] font-medium text-slate-800 bg-transparent outline-none w-full cursor-pointer">
-            <option>Imlil, High Atlas</option>
-            <option>Merzouga, Sahara</option>
-            <option>Chefchaouen</option>
-            <option>Essaouira Coast</option>
+            <option value="">Select a location</option>
+            @foreach($locations as $location)
+            <option value="{{ $location->id }}">{{ $location->name }}</option>
+            @endforeach
           </select>
+
         </div>
       </div>
 
@@ -45,18 +48,21 @@
         <i class="fa-solid fa-person-hiking text-forest-500 text-[13px]"></i>
         <div class="text-left w-full">
           <label class="block text-[9px] uppercase tracking-wider text-slate-400 font-semibold">Activity</label>
+
           <select class="text-[12.5px] font-medium text-slate-800 bg-transparent outline-none w-full cursor-pointer">
-            <option>Trekking</option>
-            <option>Camping</option>
-            <option>Desert 4x4</option>
-            <option>Climbing</option>
+            <option value="">Select an activity</option>
+            @foreach($places as $place)
+            <option value="{{ $place->id }}">{{ $place->name }}</option>
+            @endforeach
           </select>
+
         </div>
       </div>
 
       <button class="flex items-center justify-center gap-2 bg-forest-800 hover:bg-forest-700 transition-colors text-white text-[12.5px] font-semibold px-6 py-3 rounded-xl">
         <i class="fa-solid fa-magnifying-glass text-[11px]"></i> Search
       </button>
+
     </div>
 
     <div class="flex items-center gap-6 mt-8 text-white/70 text-[10.5px] font-medium">
@@ -99,7 +105,7 @@
 
   <!-- Slider track -->
   <div x-ref="slider" x-data
-       class="flex gap-6 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-4 -mx-1 px-1">
+    class="flex gap-6 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-4 -mx-1 px-1">
 
     <template x-for="dest in [
       { img:'https://images.unsplash.com/photo-1509316785289-025f5b846b35?auto=format&fit=crop&w=800&q=80', name:'Merzouga Dunes', loc:'Sahara Desert', price:64, rating:4.9, icon:'fa-shoe-prints', tag:'Camel Trekking' },
@@ -157,7 +163,7 @@
 <!-- هاد الفوتر متناسق 100% مع ألوان الهيدر والطبيعة وتصميمو عصري -->
 <footer class="bg-slate-900 text-slate-400 text-xs py-16 border-t border-slate-800">
   <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-10">
-    
+
     <!-- Column 1: Brand -->
     <div class="space-y-4">
       <div class="flex items-center gap-2">

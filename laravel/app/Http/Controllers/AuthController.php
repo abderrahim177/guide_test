@@ -8,7 +8,6 @@ use App\Http\Requests\registerRequest;
 use App\Http\Requests\loginRequest;
 use App\Models\User; 
 use Illuminate\Support\Facades\Hash;
-use App\Models\Post;
 class AuthController extends Controller
 {
     public function save(registerRequest $request) {
