@@ -68,34 +68,113 @@
     </div>
 
     <!-- Navigation Menu (Animated Active Border) -->
-    <nav class="hidden md:flex items-center gap-8 font-medium text-slate-600 text-[12.5px] relative h-full">
+     <nav class="hidden md:flex items-center gap-8 font-medium text-slate-600 text-[12.5px] relative h-full">
+
       <a href="#" @click="activeTab = 'home'" :class="activeTab === 'home' ? 'text-forest-800 font-semibold' : 'hover:text-forest-800'" class="relative py-5 transition-colors">
+
         Accueil
+
         <span x-show="activeTab === 'home'" x-transition class="absolute bottom-0 left-0 w-full h-[2px] bg-forest-800"></span>
+
       </a>
+
       <a href="#destinations" @click="activeTab = 'guides'" :class="activeTab === 'guides' ? 'text-forest-800 font-semibold' : 'hover:text-forest-800'" class="relative py-5 transition-colors">
+
         Nos Guides
+
         <span x-show="activeTab === 'guides'" x-transition class="absolute bottom-0 left-0 w-full h-[2px] bg-forest-800"></span>
+
       </a>
+
       <a href="#" @click="activeTab = 'gear'" :class="activeTab === 'gear' ? 'text-forest-800 font-semibold' : 'hover:text-forest-800'" class="relative py-5 transition-colors">
+
         Équipements
+
         <span x-show="activeTab === 'gear'" x-transition class="absolute bottom-0 left-0 w-full h-[2px] bg-forest-800"></span>
+
       </a>
+
       <a href="#" @click="activeTab = 'about'" :class="activeTab === 'about' ? 'text-forest-800 font-semibold' : 'hover:text-forest-800'" class="relative py-5 transition-colors">
+
         À propos
+
         <span x-show="activeTab === 'about'" x-transition class="absolute bottom-0 left-0 w-full h-[2px] bg-forest-800"></span>
+
       </a>
+
     </nav>
 
-    <!-- Auth Buttons (Login / Register) -->
-    <div class="flex items-center gap-4">
-      <a href="{{ route('login') }}" class="text-slate-600 hover:text-forest-800 font-medium text-[12.5px] transition-colors">
-        Connexion
+<div class="flex items-center gap-4">
+  @auth
+  @if(auth()->user()->role_id == 1)
+    <a href="{{ url('/admin') }}" class="text-[12.5px] font-medium text-forest-800">
+      <i class="fa-solid fa-gauge mr-1"></i> Admin Dashboard
+    </a>
+
+  @elseif(auth()->user()->role_id == 2)
+    <a href="{{ url('/guide/dashboard') }}" class="text-[12.5px] font-medium text-forest-800">
+      <i class="fa-solid fa-compass mr-1"></i> Guide Dashboard
+    </a>
+
+  @else
+
+  <div class="relative" x-data="{ openProfile: false }" @click.away="openProfile = false">
+    
+    <button @click="openProfile = !openProfile" 
+            class="flex items-center gap-2 focus:outline-none group">
+      
+      <div class="w-8 h-8 rounded-full bg-forest-100 border border-forest-200 flex items-center justify-center text-forest-800 font-bold text-xs shadow-sm group-hover:border-forest-400 transition-all">
+        {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+      </div>
+      
+      <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 group-hover:text-slate-600 transition-colors"></i>
+    </button>
+
+    <div x-show="openProfile" 
+         x-transition:enter="transition ease-out duration-100"
+         x-transition:enter-start="opacity-0 transform scale-95 translate-y-1"
+         x-transition:enter-end="opacity-100 transform scale-100 translate-y-0"
+         x-transition:leave="transition ease-in duration-75"
+         x-transition:leave-start="opacity-100 transform scale-100 translate-y-0"
+         x-transition:leave-end="opacity-0 transform scale-95 translate-y-1"
+         class="absolute right-0 mt-2.5 w-48 bg-white rounded-2xl shadow-xl border border-slate-100 py-1.5 z-50 origin-top-right"
+         x-cloak>
+         
+      <div class="px-4 py-2 border-b border-slate-50">
+        <p class="text-[12px] font-semibold text-slate-800 truncate">{{ auth()->user()->name }}</p>
+        <p class="text-[10px] text-slate-400 truncate font-light">{{ auth()->user()->email }}</p>
+      </div>
+
+      <a href="{{ url('/profile') }}" 
+         class="flex items-center gap-2.5 px-4 py-2 text-[12px] text-slate-600 hover:bg-slate-50 hover:text-forest-800 transition-colors">
+        <i class="fa-solid fa-user text-slate-400 text-[11px]"></i>
+        Mon Profil
       </a>
-      <a href="{{ route('register') }}" class="bg-forest-800 hover:bg-forest-700 text-white text-[11.5px] font-semibold px-4 py-2 rounded-xl transition-all shadow-sm shadow-forest-100">
-        S'inscrire
+
+      <a href="#" 
+         class="flex items-center gap-2.5 px-4 py-2 text-[12px] text-slate-600 hover:bg-slate-50 hover:text-forest-800 transition-colors">
+        <i class="fa-solid fa-bookmark text-slate-400 text-[11px]"></i>
+        Mes Réservations
       </a>
+
+      <div class="h-[1px] bg-slate-100 my-1"></div>
+
+      <a href="{{ route('logout') }}" 
+         class="flex items-center gap-2.5 px-4 py-2 text-[12px] text-red-500 hover:bg-red-50/50 font-medium transition-colors">
+        <i class="fa-solid fa-arrow-right-from-bracket text-[11px]"></i>
+        Déconnexion
+      </a>
+      
     </div>
+  </div>
+@endif
+@endauth
+
+  @guest
+    <a href="{{ url('/login') }}" class="text-[12.5px] font-medium text-slate-600 hover:text-forest-800">Connexion</a>
+    <a href="{{ url('/register') }}" class="bg-forest-800 text-white px-4 py-2 rounded-xl text-[12.5px] font-semibold hover:bg-forest-700">S'inscrire</a>
+  @endguest
+</div>
   </div>
 </header>
   @yield('content')
