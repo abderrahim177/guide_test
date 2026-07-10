@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
@@ -45,5 +47,23 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+    // العلاقة مع الـ Role (كل مستخدم عنده دور واحد)
+    public function role(): BelongsTo
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    // العلاقة مع البرامج (المرشد عنده بزاف ديال البرامج)
+    public function programs(): HasMany
+    {
+        // حددنا السميّة ديال الجدول 'guide_programe' حيت عندك بالمفرد
+        return $this->hasMany(GuideProgram::class, 'user_id');
+    }
+
+    // العلاقة مع الحجوزات (السائح يقدر يدير بزاف ديال الحجوزات)
+    public function bookings(): HasMany
+    {
+        return $this->hasMany(Booking::class, 'user_id');
     }
 }
