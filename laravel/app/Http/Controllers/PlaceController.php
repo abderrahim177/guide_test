@@ -12,4 +12,12 @@ class PlaceController extends Controller{
         $locations = Region::all();  
         return view('welcome', compact('places', 'locations'));
     }
+
+   public function details_places($id)
+{
+    $region =Region::with(['programs.activity', 'programs.guide'])
+        ->findOrFail($id);
+
+    return view('detaile_place', compact('region'));
+}
 }

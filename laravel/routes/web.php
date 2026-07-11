@@ -22,4 +22,5 @@ Route::middleware('auth')->group(function () {
     
     Route::get('/details{id}', [GetaileController::class, 'details'])->name('details');
     Route::get('/profile' , [ProfileController::class , 'profile'])->name('profile');
+    Route::get('/details_places/{id}', [PlaceController::class , 'details_places'])->name('detaile_place');
 });

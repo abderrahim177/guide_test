@@ -81,8 +81,8 @@
                     <span class="text-lg font-extrabold text-forest-700">{{ $program->price_per_day }} DH</span>
                   </div>
                   
-                  <a href="https://wa.me/{{ $guideUser->phone }}?text=Hello {{ $guideUser->name }}, I am interested in booking your '{{ $program->title }}' tour." target="_blank" class="px-5 py-2.5 bg-forest-50 hover:bg-forest-700 text-forest-700 hover:text-white font-bold text-xs rounded-xl transition-all flex items-center gap-1">
-                    Book Region <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                  <a href="{{ route('detaile_place', ['id' => $program->region?->id]) }}" class="px-5 py-2.5 bg-forest-50 hover:bg-forest-700 text-forest-700 hover:text-white font-bold text-xs rounded-xl transition-all flex items-center gap-1">
+                    Show Details <i class="fa-solid fa-chevron-right text-[10px]"></i>
                   </a>
                 </div>
 
