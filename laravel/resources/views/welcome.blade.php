@@ -132,7 +132,7 @@
               <span>{{ $guide->price_per_day }} DH</span> <span class="text-[10px] font-normal text-slate-400">/ day</span>
             </div>
 
-            <a href="https://wa.me/{{ $guide->guide?->phone }}" target="_blank" class="w-8 h-8 rounded-full bg-forest-50 hover:bg-forest-800 text-forest-700 hover:text-white flex items-center justify-center transition-colors">
+            <a href="#"  class="w-8 h-8 rounded-full bg-forest-50 hover:bg-forest-800 text-forest-700 hover:text-white flex items-center justify-center transition-colors">
               <i class="fa-solid fa-arrow-right text-[10px]"></i>
             </a>
           </div>
