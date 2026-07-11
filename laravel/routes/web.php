@@ -2,7 +2,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PlaceController;
-
+use App\Http\Controllers\GuideController;
 Route::get('/', [PlaceController::class, 'index']);
 
 Route::get('/login' , function(){
@@ -22,3 +22,5 @@ Route::get('/logout' , [AuthController::class , 'logout'])->name('logout');
 Route::get('/places' , [PlaceController::class , 'getPlaces']);
 
 Route::get('/GetLocation' , [PlaceController::class , 'GetLocation']);
+
+Route::get('/', [GuideController::class, 'getGuides']);

@@ -1,7 +1,5 @@
 @extends('layouts.master')
 @section('content')
-
-<!-- ============ HERO ============ -->
 <section class="relative h-[92vh] min-h-[640px] w-full overflow-hidden">
   <img
     src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1800&q=80"
@@ -101,62 +99,54 @@
         <i class="fa-solid fa-arrow-right text-[12px]"></i>
       </button>
     </div>
-  </div>
 
-  <!-- Slider track -->
-  <div x-ref="slider" x-data
-    class="flex gap-6 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-4 -mx-1 px-1">
+    <div x-ref="slider" x-data
+      class="flex gap-6 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-4 -mx-1 px-1">
 
-    <template x-for="dest in [
-      { img:'https://images.unsplash.com/photo-1509316785289-025f5b846b35?auto=format&fit=crop&w=800&q=80', name:'Merzouga Dunes', loc:'Sahara Desert', price:64, rating:4.9, icon:'fa-shoe-prints', tag:'Camel Trekking' },
-      { img:'https://images.unsplash.com/photo-1553603227-2358aabe821e?auto=format&fit=crop&w=800&q=80', name:'The Blue Pearl', loc:'Chefchaouen', price:38, rating:4.8, icon:'fa-camera', tag:'City Walk' },
-      { img:'https://images.unsplash.com/photo-1483728642387-6c3bdd6c93e5?auto=format&fit=crop&w=800&q=80', name:'Toubkal Summit', loc:'High Atlas · 4,167m', price:72, rating:5.0, icon:'fa-mountain', tag:'Summit Trek' },
-      { img:'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80', name:'Atlantic Coastline', loc:'Essaouira', price:45, rating:4.7, icon:'fa-water', tag:'Surf &amp; Sail' },
-      { img:'https://images.unsplash.com/photo-1518684079-3c830dcef090?auto=format&fit=crop&w=800&q=80', name:'Ourika Valley', loc:'High Atlas · 1,200m', price:52, rating:4.9, icon:'fa-campground', tag:'Waterfall Hike' }
-    ]" :key="dest.name">
-
+      @foreach($guides as $guide)
       <div class="card-hover snap-start flex-shrink-0 w-[260px] sm:w-[280px] bg-white rounded-2xl overflow-hidden shadow-soft hover:shadow-card border border-slate-100">
+
         <div class="card-img-wrap relative h-[170px] overflow-hidden">
-          <img :src="dest.img" :alt="dest.name" class="w-full h-full object-cover">
+          <img src="{{ asset($guide->guide?->avatar ?? 'guides/guide1.jpg') }}" alt="{{ $guide->guide?->name ?? 'Guide' }}" class="w-full h-full object-cover">
           <div class="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent"></div>
 
-          <!-- Rating badge -->
           <span class="absolute top-3 left-3 flex items-center gap-1 bg-white/90 backdrop-blur-sm text-[10.5px] font-semibold text-forest-800 px-2.5 py-1 rounded-full shadow-soft">
-            <i class="fa-solid fa-star text-sand-500 text-[9px]"></i> <span x-text="dest.rating"></span>
+            <i class="fa-solid fa-star text-sand-500 text-[9px]"></i> <span>4.9</span>
           </span>
 
-          <!-- Activity badge -->
           <span class="absolute bottom-3 left-3 flex items-center gap-1.5 bg-forest-900/70 backdrop-blur-sm text-white text-[9.5px] font-medium px-2.5 py-1.5 rounded-full">
-            <i class="fa-solid text-[10px] text-sand-300" :class="dest.icon"></i> <span x-text="dest.tag"></span>
+            <i class="fa-solid text-[10px] text-sand-300 {{ $guide->activity?->icon }}"></i> <span>{{ $guide->activity?->name }}</span>
           </span>
         </div>
 
         <div class="p-4">
           <div class="flex items-center gap-1.5 text-[9.5px] font-semibold text-slate-400 uppercase tracking-wide">
-            <i class="fa-solid fa-location-dot text-[9px]"></i> <span x-text="dest.loc"></span>
+            <i class="fa-solid fa-location-dot text-[9px]"></i> <span>{{ $guide->region?->name }}</span>
           </div>
-          <h3 class="text-[14.5px] font-semibold text-forest-900 mt-1.5" x-text="dest.name"></h3>
 
+          <h3 class="text-[14.5px] font-semibold text-forest-900 mt-1.5">
+            {{ $guide->guide?->name ?? 'Unknown Guide' }}
+          </h3>
           <div class="flex items-center justify-between mt-3.5 pt-3 border-t border-slate-100">
             <div class="text-[13px] font-bold text-forest-700">
-              $<span x-text="dest.price"></span> <span class="text-[10px] font-normal text-slate-400">/ day</span>
+              <span>{{ $guide->price_per_day }} DH</span> <span class="text-[10px] font-normal text-slate-400">/ day</span>
             </div>
-            <button class="w-8 h-8 rounded-full bg-forest-50 hover:bg-forest-800 text-forest-700 hover:text-white flex items-center justify-center transition-colors">
+
+            <a href="https://wa.me/{{ $guide->guide?->phone }}" target="_blank" class="w-8 h-8 rounded-full bg-forest-50 hover:bg-forest-800 text-forest-700 hover:text-white flex items-center justify-center transition-colors">
               <i class="fa-solid fa-arrow-right text-[10px]"></i>
-            </button>
+            </a>
           </div>
         </div>
       </div>
-    </template>
+      @endforeach
 
-    <!-- View-all card -->
-    <div class="snap-start flex-shrink-0 w-[260px] sm:w-[280px] rounded-2xl bg-forest-800 flex flex-col items-center justify-center text-center text-white p-6">
-      <i class="fa-solid fa-compass text-[22px] text-sand-300 mb-4"></i>
-      <p class="text-[13px] font-semibold">Explore all destinations</p>
-      <p class="text-[10.5px] text-white/60 mt-1.5 font-light">32 curated escapes across Morocco</p>
-      <button class="mt-5 text-[11px] font-semibold bg-white text-forest-800 px-4 py-2 rounded-xl">View all →</button>
+      <div class="snap-start flex-shrink-0 w-[260px] sm:w-[280px] rounded-2xl bg-forest-800 flex flex-col items-center justify-center text-center text-white p-6">
+        <i class="fa-solid fa-compass text-[22px] text-sand-300 mb-4"></i>
+        <p class="text-[13px] font-semibold">Explore all destinations</p>
+        <p class="text-[10.5px] text-white/60 mt-1.5 font-light">Curated escapes across Azilal</p>
+        <button class="mt-5 text-[11px] font-semibold bg-white text-forest-800 px-4 py-2 rounded-xl">View all →</button>
+      </div>
     </div>
-  </div>
 </section>
 
 <!-- ============ FOOTER (Professional & Modern) ============ -->
