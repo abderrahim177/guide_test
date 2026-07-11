@@ -1,24 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{ $guideUser->name }} - Professional Local Guide</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            forest: { 50: '#f2f7f4', 700: '#2c5234', 800: '#1e3b24', 900: '#132517' },
-            sand: { 300: '#e6c794', 500: '#d4af37' }
-          }
-        }
-      }
-    }
-  </script>
-</head>
+@extends('layouts.master')
+@section('content')
 <body class="bg-slate-50 text-slate-800 font-sans antialiased">
 
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
@@ -75,10 +56,7 @@
         <div class="space-y-6">
           @forelse($programs as $program)
             <div class="bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-all grid grid-cols-1 md:grid-cols-12">
-              
               <div class="md:col-span-5 relative h-48 md:h-full min-h-[180px]">
-                <!-- 💡 تم التعديل هنا لقراءة مسار الصورة الحقيقي من جدول الـ region الخاص بك -->
-<!--  السطر الصحيح اللي كيقرا من مجلد places نيشان: -->
                 <img src="{{ asset('places/' . $program->region?->image) }}" alt="{{ $program->region?->name }}" class="w-full h-full object-cover">                
                 <span class="absolute top-3 left-3 flex items-center gap-1.5 bg-forest-900/80 backdrop-blur-sm text-white text-[10px] font-medium px-3 py-1.5 rounded-full">
                   <i class="fa-solid {{ $program->activity?->icon ?? 'fa-compass' }} text-sand-300"></i>
@@ -122,5 +100,4 @@
     </div>
   </main>
 
-</body>
-</html>
+@endsection

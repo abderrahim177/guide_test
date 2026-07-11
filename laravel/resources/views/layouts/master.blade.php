@@ -145,7 +145,7 @@
         <p class="text-[10px] text-slate-400 truncate font-light">{{ auth()->user()->email }}</p>
       </div>
 
-      <a href="{{ url('/profile') }}" 
+      <a href="{{ route('profile') }}" 
          class="flex items-center gap-2.5 px-4 py-2 text-[12px] text-slate-600 hover:bg-slate-50 hover:text-forest-800 transition-colors">
         <i class="fa-solid fa-user text-slate-400 text-[11px]"></i>
         Mon Profil
