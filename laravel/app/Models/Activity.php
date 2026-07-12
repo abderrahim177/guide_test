@@ -11,4 +11,8 @@ class Activity extends Model
     {
         return $this->hasMany(GuideProgram::class, 'activity_id');
     }
+    
+    public function Equipments(){
+        return $this->hasMany(Equipment::class);
+    }
 }

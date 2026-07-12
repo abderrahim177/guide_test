@@ -72,7 +72,7 @@
             </div>
 
             <div class="pt-2">
-              <a href=""
+              <a href="{{ route('activity_materials', ['id' => $activity->id]) }}" 
                  class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-slate-950 hover:bg-emerald-700 text-white font-semibold text-xs rounded-xl shadow-sm hover:shadow-md transition-all duration-300 group/btn">
                 <i class="fa-solid fa-toolbox text-[13px] text-slate-400 group-hover/btn:text-white transition-colors"></i>
                 <span>Show Required Materials</span>
