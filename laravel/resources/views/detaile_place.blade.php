@@ -21,50 +21,57 @@
 
 <body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen pb-16">
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
-    <a href="{{ url()->previous() }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-600 border border-slate-200/60 text-xs font-semibold transition-all group shadow-sm">
-      <i class="fa-solid fa-arrow-left transition-transform group-hover:-translate-x-0.5"></i>
-      <span>Back to Destination Guide</span>
-    </a>
-  </div>
+ <!-- 1. زر الرجوع دابا ولا فوق الصورة وطاير فوق منها (Absolute Position) -->
+<div class="absolute top-6 left-0 right-0 z-50 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <a href="{{ url()->previous() }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900/40 backdrop-blur-md text-white hover:bg-slate-900/60 border border-white/10 text-xs font-semibold transition-all group shadow-md">
+    <i class="fa-solid fa-arrow-left transition-transform group-hover:-translate-x-0.5"></i>
+    <span>Back to Destination Guide</span>
+  </a>
+</div>
 
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-
-    <div class="relative h-[320px] sm:h-[450px] w-full rounded-3xl overflow-hidden shadow-xl mb-10 group border border-slate-200/40 bg-slate-900">
-
-      <!-- Activity/Place Image with modern smooth zoom on hover -->
-      <img src="{{ asset('places/' . $region->image) }}"
-        alt="{{ $region->name }}"
-        class="w-full h-full object-cover transform scale-100 group-hover:scale-105 transition-transform duration-700 ease-out opacity-90">
-
-      <!-- Premium Dual Gradient Overlay (Top ambient shadow + Bottom rich text protection) -->
-      <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-slate-950/10 flex flex-col justify-end p-6 sm:p-12">
-
-        <!-- Content Wrapper -->
-        <div class="max-w-3xl space-y-3 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500 ease-out">
-
-          <!-- Glassmorphic Subtitle Badge -->
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 shadow-inner">
-            <span class="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse"></span>
-            <span class="text-[10px] font-bold text-amber-400 uppercase tracking-widest">Explore Destination</span>
-          </div>
-
-          <!-- Typography Optimization with ambient text shadow -->
-          <h1 class="text-white text-3xl sm:text-6xl font-black tracking-tight drop-shadow-md leading-none">
-            {{ $region->name }}
-          </h1>
-
-          <!-- Description Layout with better contrast and reading line-height -->
-          <p class="text-slate-200/90 text-xs sm:text-sm font-light leading-relaxed max-w-2xl drop-shadow-sm line-clamp-2 pt-1">
-            {{ $region->description ?? 'Discover the top outdoor activities and professional experiences available in this breathtaking region.' }}
-          </p>
-
+<!-- 2. الـ Hero Section دابا شاد الشاشة كاملة من الحافة للحافة ومن الفوق كاع (Full Width & Top 0) -->
+<div class="relative h-[400px] sm:h-[580px] w-full overflow-hidden shadow-2xl mb-10 group bg-slate-900">
+  
+  <!-- Image Component -->
+  <img src="{{ asset('places/' . $region->image) }}" 
+       alt="{{ $region->name }}" 
+       class="w-full h-full object-cover transform scale-100 group-hover:scale-103 transition-transform duration-1000 ease-out opacity-85">
+  
+  <!-- Premium Dual Gradient Overlay (زدنا ف الـ pt-32 باش النص ما يتداخلش مع الزر لفو9) -->
+  <div class="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/40 to-transparent flex flex-col justify-end pb-12 pt-32">
+    
+    <div class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl space-y-4 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500 ease-out">
+        
+        <!-- Glassmorphic Subtitle Badge -->
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 shadow-inner">
+          <span class="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+          <span class="text-[10px] font-bold text-amber-400 uppercase tracking-widest">Explore Destination</span>
         </div>
+        
+        <!-- Title -->
+        <h1 class="text-white text-4xl sm:text-7xl font-black tracking-tight drop-shadow-xl leading-none">
+          {{ $region->name }}
+        </h1>
+        
+        <!-- Description -->
+        <p class="text-slate-200/90 text-sm sm:text-base font-light leading-relaxed max-w-2xl drop-shadow-md line-clamp-3 pt-1">
+          {{ $region->description ?? 'Discover the top outdoor activities and professional experiences available in this breathtaking region.' }}
+        </p>
+        
       </div>
-
-      <!-- Subtle top-light glow edge -->
-      <div class="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
     </div>
+    
+  </div>
+  
+  <!-- Top Ambient Glow Line -->
+  <div class="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/15 to-transparent"></div>
+</div>
+
+<!-- 3. عاد هنايا كتفتح الـ main ديالك اللي غاتحط فيه السلايدر وباقي البيانات المحمية بـ Container -->
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+  <!-- الكود ديال الأنشطة والمعدات حطو هنا لداخل -->
+</main>
 
     <div class="mb-6 flex items-center justify-between">
       <div>
