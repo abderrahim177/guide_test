@@ -13,5 +13,9 @@ class Region extends Model
     {
         return $this->hasMany(GuideProgram::class, 'region_id');
     }
+    public function activities()
+    {
+        return $this->belongsToMany(Activity::class, 'activity_region');
+    }
 
 }

@@ -10,13 +10,21 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 class AuthController extends Controller
 {
+    public function showRegister()
+    {
+        return view('auth.register'); 
+    }
+
+    public function showLogin()
+    {
+        return view('auth.login'); 
+    }
     public function save(registerRequest $request) {
         $credentials = $request->validated();
         $credentials['password'] = Hash::make($credentials['password']);
         User::create($credentials);
         return redirect()->route('/')->with('success', 'Account created successfully! You can now log in.');
     }
-
     public function check(loginRequest $request){
         $credentials = $request->validated();
         

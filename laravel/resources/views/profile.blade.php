@@ -1,7 +1,22 @@
-@extends('layouts.master')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-@section('content')
-<!-- ألوان الهوية البصرية الجديدة الفاخرة (Premium Carbon & Sand Accent) -->
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,500&display=swap" rel="stylesheet">
+
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- FontAwesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<!-- Alpine -->
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.13.5/cdn.min.js"></script>
 <style>
   .premium-carbon-gradient {
     background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
@@ -10,8 +25,8 @@
   .accent-sand-bg { background-color: #fdfaf4; }
   .accent-sand-border { border-color: #f5ebd5; }
 </style>
-
-<div class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen">
+<body>
+  <div class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen">
   
   <!-- ================= PREMIUM HEADER BANNER ================= -->
   <div class="premium-carbon-gradient text-white relative overflow-hidden shadow-sm py-12 sm:py-14 border-b border-slate-900/10">
@@ -185,4 +200,8 @@
     </div>
   </main>
 </div>
-@endsection
+</body>
+</html>
+
+
+
