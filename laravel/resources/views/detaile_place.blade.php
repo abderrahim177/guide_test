@@ -30,7 +30,7 @@
 </div>
 
 <!-- 2. الـ Hero Section دابا شاد الشاشة كاملة من الحافة للحافة ومن الفوق كاع (Full Width & Top 0) -->
-<div class="relative h-[400px] sm:h-[580px] w-full overflow-hidden shadow-2xl mb-10 group bg-slate-900">
+<div class="relative h-[350px] sm:h-[500px] w-full overflow-hidden shadow-2xl mb-10 group bg-slate-900">
   
   <!-- Image Component -->
   <img src="{{ asset('places/' . $region->image) }}" 
