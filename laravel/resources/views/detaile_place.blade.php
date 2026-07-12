@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,8 +18,9 @@
     background: linear-gradient(180deg, rgba(15, 23, 42, 0) 0%, rgba(15, 23, 42, 0.9) 100%);
   }
 </style>
+
 <body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen pb-16">
-  
+
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
     <a href="{{ url()->previous() }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-600 border border-slate-200/60 text-xs font-semibold transition-all group shadow-sm">
       <i class="fa-solid fa-arrow-left transition-transform group-hover:-translate-x-0.5"></i>
@@ -27,16 +29,41 @@
   </div>
 
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-    
-    <div class="relative h-[280px] sm:h-[400px] w-full rounded-3xl overflow-hidden shadow-lg mb-10">
-      <img src="{{ asset('places/' . $region->image) }}" alt="{{ $region->name }}" class="w-full h-full object-cover">
-      <div class="absolute inset-0 hero-gradient flex flex-col justify-end p-6 sm:p-10">
-        <span class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-1">Explore Destination</span>
-        <h1 class="text-white text-3xl sm:text-5xl font-black tracking-tight mb-2">{{ $region->name }}</h1>
-        <p class="text-slate-200 text-xs sm:text-sm max-w-2xl font-light leading-relaxed line-clamp-2">
-          {{ $region->description ?? 'Discover the top outdoor activities and experiences available in this region.' }}
-        </p>
+
+    <div class="relative h-[320px] sm:h-[450px] w-full rounded-3xl overflow-hidden shadow-xl mb-10 group border border-slate-200/40 bg-slate-900">
+
+      <!-- Activity/Place Image with modern smooth zoom on hover -->
+      <img src="{{ asset('places/' . $region->image) }}"
+        alt="{{ $region->name }}"
+        class="w-full h-full object-cover transform scale-100 group-hover:scale-105 transition-transform duration-700 ease-out opacity-90">
+
+      <!-- Premium Dual Gradient Overlay (Top ambient shadow + Bottom rich text protection) -->
+      <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-slate-950/10 flex flex-col justify-end p-6 sm:p-12">
+
+        <!-- Content Wrapper -->
+        <div class="max-w-3xl space-y-3 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500 ease-out">
+
+          <!-- Glassmorphic Subtitle Badge -->
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 shadow-inner">
+            <span class="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+            <span class="text-[10px] font-bold text-amber-400 uppercase tracking-widest">Explore Destination</span>
+          </div>
+
+          <!-- Typography Optimization with ambient text shadow -->
+          <h1 class="text-white text-3xl sm:text-6xl font-black tracking-tight drop-shadow-md leading-none">
+            {{ $region->name }}
+          </h1>
+
+          <!-- Description Layout with better contrast and reading line-height -->
+          <p class="text-slate-200/90 text-xs sm:text-sm font-light leading-relaxed max-w-2xl drop-shadow-sm line-clamp-2 pt-1">
+            {{ $region->description ?? 'Discover the top outdoor activities and professional experiences available in this breathtaking region.' }}
+          </p>
+
+        </div>
       </div>
+
+      <!-- Subtle top-light glow edge -->
+      <div class="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
     </div>
 
     <div class="mb-6 flex items-center justify-between">
@@ -53,47 +80,48 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       @forelse($region->activities as $activity)
-        <div class="bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col group">
-          
-          <div class="relative h-48 w-full overflow-hidden bg-slate-100">
-            <img src="{{ asset('activities/' . $activity->image) }}" alt="{{ $activity->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-            
-            <div class="absolute top-4 left-4 h-9 w-9 rounded-xl bg-white/90 backdrop-blur-md text-slate-800 flex items-center justify-center shadow-sm border border-white/20">
-              <i class="fa-solid {{ $activity->icon ?? 'fa-compass' }} text-sm text-emerald-600"></i>
-            </div>
+      <div class="bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col group">
+
+        <div class="relative h-48 w-full overflow-hidden bg-slate-100">
+          <img src="{{ asset('activities/' . $activity->image) }}" alt="{{ $activity->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+
+          <div class="absolute top-4 left-4 h-9 w-9 rounded-xl bg-white/90 backdrop-blur-md text-slate-800 flex items-center justify-center shadow-sm border border-white/20">
+            <i class="fa-solid {{ $activity->icon ?? 'fa-compass' }} text-sm text-emerald-600"></i>
           </div>
-
-          <div class="p-5 flex-grid flex flex-col justify-between flex-1 space-y-4">
-            <div>
-              <h3 class="text-base font-bold text-slate-900 group-hover:text-emerald-700 transition-colors mb-1">
-                {{ $activity->name }}
-              </h3>
-              <p class="text-xs text-slate-400 font-medium">Available in {{ $region->name }}</p>
-            </div>
-
-            <div class="pt-2">
-              <a href="{{ route('activity_materials', ['id' => $activity->id]) }}" 
-                 class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-slate-950 hover:bg-emerald-700 text-white font-semibold text-xs rounded-xl shadow-sm hover:shadow-md transition-all duration-300 group/btn">
-                <i class="fa-solid fa-toolbox text-[13px] text-slate-400 group-hover/btn:text-white transition-colors"></i>
-                <span>Show Required Materials</span>
-                <i class="fa-solid fa-arrow-right text-[10px] opacity-60 group-hover/btn:translate-x-1 transition-transform"></i>
-              </a>
-            </div>
-          </div>
-
         </div>
+
+        <div class="p-5 flex-grid flex flex-col justify-between flex-1 space-y-4">
+          <div>
+            <h3 class="text-base font-bold text-slate-900 group-hover:text-emerald-700 transition-colors mb-1">
+              {{ $activity->name }}
+            </h3>
+            <p class="text-xs text-slate-400 font-medium">Available in {{ $region->name }}</p>
+          </div>
+
+          <div class="pt-2">
+            <a href="{{ route('activity_materials', ['id' => $activity->id]) }}"
+              class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-slate-950 hover:bg-emerald-700 text-white font-semibold text-xs rounded-xl shadow-sm hover:shadow-md transition-all duration-300 group/btn">
+              <i class="fa-solid fa-toolbox text-[13px] text-slate-400 group-hover/btn:text-white transition-colors"></i>
+              <span>Show Required Materials</span>
+              <i class="fa-solid fa-arrow-right text-[10px] opacity-60 group-hover/btn:translate-x-1 transition-transform"></i>
+            </a>
+          </div>
+        </div>
+
+      </div>
       @empty
-        <div class="col-span-full bg-white rounded-3xl p-12 text-center border border-dashed border-slate-200">
-          <div class="h-12 w-12 rounded-full bg-slate-50 flex items-center justify-center mx-auto mb-3 border border-slate-100">
-            <i class="fa-solid fa-map-location-dot text-xl text-slate-300"></i>
-          </div>
-          <h4 class="text-sm font-bold text-slate-700 mb-1">No activities listed yet</h4>
-          <p class="text-xs text-slate-400 max-w-xs mx-auto">We haven't linked any specific outdoor activities to this destination yet. Check back soon!</p>
+      <div class="col-span-full bg-white rounded-3xl p-12 text-center border border-dashed border-slate-200">
+        <div class="h-12 w-12 rounded-full bg-slate-50 flex items-center justify-center mx-auto mb-3 border border-slate-100">
+          <i class="fa-solid fa-map-location-dot text-xl text-slate-300"></i>
         </div>
+        <h4 class="text-sm font-bold text-slate-700 mb-1">No activities listed yet</h4>
+        <p class="text-xs text-slate-400 max-w-xs mx-auto">We haven't linked any specific outdoor activities to this destination yet. Check back soon!</p>
+      </div>
       @endforelse
     </div>
 
   </main>
 
 </body>
+
 </html>
