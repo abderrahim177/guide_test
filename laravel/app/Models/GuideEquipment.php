@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class GuideEquipment extends Model
 {
+    protected $table = 'guide_equipment'; 
     protected $fillable = [
         'user_id',
         'equipment_id',

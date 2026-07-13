@@ -11,7 +11,7 @@ class Equipment extends Model
     }
     public function guides()
 {
-    return $this->belongsToMany(User::class, 'guide_equipments', 'equipment_id', 'user_id')
+    return $this->belongsToMany(User::class, 'guide_equipment', 'equipment_id', 'user_id')
                 ->withPivot('price_per_day', 'stock') 
                 ->withTimestamps();
 }

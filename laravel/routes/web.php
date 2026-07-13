@@ -22,6 +22,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile' , [ProfileController::class , 'profile'])->name('profile');
     Route::get('/details_places/{id}', [PlaceController::class , 'details_places'])->name('detaile_place');
     Route::get('/materilas/{id}/materils' , [MaterialsController::class , 'getmaterials'])->name('activity_materials');
-    Route::get('/guide_materilas/{id}' , [MaterialsController::class , 'guideMaterilas'])->name('guide_materials');
+    Route::get('/guide_materilas/{activity_id}/{guide_id}' , [MaterialsController::class , 'guideMaterilas'])->name('guide_materials');
 });
 

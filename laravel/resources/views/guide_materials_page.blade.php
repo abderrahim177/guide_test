@@ -13,7 +13,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-        body { font-family: 'Poppins', sans-serif; }
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
 
         /* تحسين شكل السكرول بار ف المتصفحات الحديثة */
         .custom-scrollbar {
@@ -22,19 +24,22 @@
         }
 
         /* تخصيص السكرول بار لـ Webkit (Chrome, Safari, Edge) */
-        .custom-scrollbar::-webkit-scrollbar { 
-            width: 6px; 
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
         }
-        .custom-scrollbar::-webkit-scrollbar-track { 
-            background: #f1f5f9; 
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
             border-radius: 8px;
         }
-        .custom-scrollbar::-webkit-scrollbar-thumb { 
-            background: #cbd5e1; 
-            border-radius: 8px; 
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 8px;
         }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { 
-            background: #94a3b8; 
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
         }
     </style>
 </head>
@@ -78,43 +83,50 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
 
-            @forelse($rentalItems as $item)
+            @forelse($rentalItems as $equipment)
+            {{-- الساروت هنا: خاصها تسالي بـ endphp باش ما تبانش ف الصفحة --}}
+            @php
+            $currentGuide = $equipment->guides->first();
+            @endphp
+
             <div class="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col overflow-hidden group">
 
                 <div class="relative aspect-[4/3] bg-slate-50 overflow-hidden">
-                    <img src="{{ asset('materials/' . $item->equipment->image) }}" alt="{{ $item->equipment->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <img src="{{ asset('materials/' . $equipment->image) }}" alt="{{ $equipment->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
 
                     <div class="absolute top-3 left-3 px-2 py-1 rounded-md bg-slate-900/60 backdrop-blur-md text-[10px] font-semibold text-white border border-white/10">
-                        Stock: <span class="text-emerald-400 font-bold">{{ $item->stock }} pcs</span>
+                        Stock: <span class="text-emerald-400 font-bold">{{ $currentGuide->pivot->stock ?? 0 }} pcs</span>
                     </div>
                 </div>
 
                 <div class="p-5 flex flex-col flex-1 justify-between space-y-4">
                     <div class="space-y-1.5">
                         <span class="text-[9px] font-bold text-slate-400 tracking-wider uppercase flex items-center gap-1">
-                            <i class="fa-solid fa-user-tie text-emerald-600"></i> Guide: {{ $item->guide->name }}
+                            <i class="fa-solid fa-user-tie text-emerald-600"></i> Guide: {{ $guide->name ?? ($currentGuide->name ?? 'Unknown') }}
                         </span>
                         <h3 class="text-sm font-bold text-slate-900 line-clamp-1 group-hover:text-emerald-600 transition-colors">
-                            {{ $item->equipment->name }}
+                            {{ $equipment->name }}
                         </h3>
                         <p class="text-xs text-slate-400 font-light line-clamp-2 leading-relaxed">
-                            {{ $item->equipment->description ?? 'No extra technical details provided.' }}
+                            {{ $equipment->description ?? 'No extra technical details provided.' }}
                         </p>
                     </div>
 
                     <div class="pt-3 border-t border-slate-50 flex items-center justify-between">
                         <div>
                             <span class="text-xs text-slate-400 block text-[9px] uppercase tracking-wider font-semibold">Per Day</span>
-                            <span class="text-base font-black text-slate-950">{{ number_format($item->price_per_day, 2) }} <span class="text-xs font-bold text-emerald-600">DH</span></span>
+                            <span class="text-base font-black text-slate-950">{{ number_format($currentGuide->pivot->price_per_day ?? 0, 2) }} <span class="text-xs font-bold text-emerald-600">DH</span></span>
                         </div>
 
                         <button
                             class="add-to-cart-btn inline-flex items-center gap-1.5 px-3.5 py-2.5 bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white text-xs font-bold rounded-xl transition-all duration-200"
-                            data-id="{{ $item->id }}"
-                            data-name="{{ $item->equipment->name }}"
-                            data-image="{{ asset('materials/' . $item->equipment->image) }}"
-                            data-price="{{ $item->price_per_day }}"
-                            data-guide="{{ $item->guide->name }}">
+                            data-id="{{ $equipment->id }}"
+                            data-equipment-id="{{ $equipment->id }}"
+                            data-guide-id="{{ $guide->id ?? ($currentGuide->id ?? '') }}"
+                            data-name="{{ $equipment->name }}"
+                            data-image="{{ asset('materials/' . $equipment->image) }}"
+                            data-price="{{ $currentGuide->pivot->price_per_day ?? 0 }}"
+                            data-guide-name="{{ $guide->name ?? ($currentGuide->name ?? '') }}">
                             <i class="fa-solid fa-plus text-[10px]"></i>
                             <span>Add to Basket</span>
                         </button>
@@ -126,7 +138,7 @@
             <div class="col-span-full bg-white border border-dashed border-slate-200 rounded-3xl p-16 text-center shadow-inner">
                 <i class="fa-solid fa-boxes-open text-4xl text-slate-300 mb-3 block"></i>
                 <h4 class="text-sm font-bold text-slate-700">No rental inventory listed</h4>
-                <p class="text-xs text-slate-400 max-w-xs mx-auto mt-1">Our guides have not uploaded rental assets for this activity parameter yet.</p>
+                <p class="text-xs text-slate-400 max-w-xs mx-auto mt-1">This guide doesn't have rental assets for this activity yet.</p>
             </div>
             @endforelse
 
@@ -134,9 +146,9 @@
     </main>
 
     <div id="cart-modal" class="fixed inset-0 top-0 left-0 right-0 bottom-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex justify-end transition-all duration-300">
-        
+
         <div class="w-full max-w-md bg-white h-full shadow-2xl flex flex-col transform transition-transform duration-300">
-            
+
             <div class="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50">
                 <div class="flex items-center gap-2">
                     <i class="fa-solid fa-basket-shopping text-emerald-600 text-base"></i>
@@ -148,14 +160,14 @@
             </div>
 
             <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
-                </div>
+            </div>
 
             <div class="p-6 border-t border-slate-100 bg-slate-50 space-y-4">
                 <div class="flex items-center justify-between text-slate-900">
                     <span class="text-xs font-medium text-slate-500">Estimated Daily Total:</span>
                     <span id="cart-total-price" class="text-lg font-black text-slate-950">0.00 <span class="text-xs font-bold text-emerald-600">DH</span></span>
                 </div>
-                
+
                 <button onclick="confirmRentalOrder()" class="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-md transition-all text-center block uppercase tracking-wider">
                     <i class="fa-solid fa-square-check mr-1.5 text-sm"></i> Confirm Rental Request
                 </button>
@@ -165,98 +177,106 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script >
+    <script>
         // Global Memory Array to keep cart state
-let globalCart = [];
+        let globalCart = [];
 
-/**
- * دالة إظهار وإخفاء الـ Modal باستعمال كلاس hidden
- */
-function toggleCartModal(show) {
-  const modal = document.getElementById('cart-modal');
-  
-  if (show) {
-    modal.classList.remove('hidden');
-    renderCartDOM();
-  } else {
-    modal.classList.add('hidden');
-  }
-}
+        /**
+         * دالة إظهار وإخفاء الـ Modal باستعمال كلاس hidden
+         */
+        function toggleCartModal(show) {
+            const modal = document.getElementById('cart-modal');
 
-/**
- * دالة إضافة المعدات للسلة
- */
-function addToCart(id, name, img, price, guide) {
-  const existingItem = globalCart.find(item => item.id === id);
+            if (show) {
+                modal.classList.remove('hidden');
+                renderCartDOM();
+            } else {
+                modal.classList.add('hidden');
+            }
+        }
 
-  if (existingItem) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Already in Basket!',
-      text: `"${name}" has already been added to your selection.`,
-      confirmButtonColor: '#059669',
-      customClass: { popup: 'rounded-2xl' }
-    });
-    return;
-  }
+        /**
+         * دالة إضافة المعدات للسلة
+         */
+        function addToCart(id, name, img, price, guide) {
+            const existingItem = globalCart.find(item => item.id === id);
 
-  globalCart.push({ id, name, img, price, guide });
+            if (existingItem) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Already in Basket!',
+                    text: `"${name}" has already been added to your selection.`,
+                    confirmButtonColor: '#059669',
+                    customClass: {
+                        popup: 'rounded-2xl'
+                    }
+                });
+                return;
+            }
 
-  Swal.fire({
-    icon: 'success',
-    title: 'Added to Basket',
-    text: `"${name}" successfully added.`,
-    showConfirmButton: false,
-    timer: 1500,
-    position: 'top-end',
-    toast: true
-  });
+            globalCart.push({
+                id,
+                name,
+                img,
+                price,
+                guide
+            });
 
-  updateCartStatusCounters();
-}
+            Swal.fire({
+                icon: 'success',
+                title: 'Added to Basket',
+                text: `"${name}" successfully added.`,
+                showConfirmButton: false,
+                timer: 1500,
+                position: 'top-end',
+                toast: true
+            });
 
-/**
- * حذف عنصر من السلة
- */
-function removeCartItem(id) {
-  globalCart = globalCart.filter(item => item.id !== id);
-  updateCartStatusCounters();
-  renderCartDOM();
-}
+            updateCartStatusCounters();
+        }
 
-/**
- * تحديث العداد
- */
-function updateCartStatusCounters() {
-  document.getElementById('cart-count').innerText = globalCart.length;
-}
+        /**
+         * حذف عنصر من السلة
+         */
+        function removeCartItem(id) {
+            globalCart = globalCart.filter(item => item.id !== id);
+            updateCartStatusCounters();
+            renderCartDOM();
+        }
 
-/**
- * بناء وعرض عناصر السلة ديناميكياً داخل الـ Modal
- */
-function renderCartDOM() {
-  const container = document.getElementById('cart-items-container');
-  const totalLabel = document.getElementById('cart-total-price');
-  
-  container.innerHTML = '';
-  let runningSum = 0;
+        /**
+         * تحديث العداد
+         */
+        function updateCartStatusCounters() {
+            document.getElementById('cart-count').innerText = globalCart.length;
+        }
 
-  if (globalCart.length === 0) {
-    container.innerHTML = `
+        /**
+         * بناء وعرض عناصر السلة ديناميكياً داخل الـ Modal
+         */
+        function renderCartDOM() {
+            const container = document.getElementById('cart-items-container');
+            const totalLabel = document.getElementById('cart-total-price');
+
+            container.innerHTML = '';
+            let runningSum = 0;
+
+            if (globalCart.length === 0) {
+                container.innerHTML = `
       <div class="text-center py-16 text-slate-300">
         <i class="fa-solid fa-basket-shopping text-3xl mb-2 block"></i>
         <p class="text-xs font-medium text-slate-400">Your rental selection is empty.</p>
       </div>`;
-    totalLabel.innerHTML = `0.00 <span class="text-xs font-bold text-emerald-600">DH</span>`;
-    return;
-  }
+                totalLabel.innerHTML = `0.00 <span class="text-xs font-bold text-emerald-600">DH</span>`;
+                return;
+            }
 
-  globalCart.forEach(item => {
-    runningSum += item.price;
-    
-    const element = document.createElement('div');
-    element.className = "flex items-center gap-3.5 bg-slate-50 p-3.5 rounded-xl border border-slate-100 shadow-sm relative group";
-    element.innerHTML = `
+            globalCart.forEach(item => {
+                runningSum += item.price;
+
+                const element = document.createElement('div');
+                element.className = "flex items-center gap-3.5 bg-slate-50 p-3.5 rounded-xl border border-slate-100 shadow-sm relative group";
+                element.innerHTML = `
       <img src="${item.img}" alt="${item.name}" class="w-12 h-12 rounded-lg object-cover bg-white border border-slate-200">
       <div class="flex-1 min-w-0">
         <h4 class="text-xs font-bold text-slate-900 truncate">${item.name}</h4>
@@ -267,56 +287,58 @@ function renderCartDOM() {
         <i class="fa-solid fa-trash-can text-[10px]"></i>
       </button>
     `;
-    container.appendChild(element);
-  });
+                container.appendChild(element);
+            });
 
-  totalLabel.innerHTML = `${runningSum.toFixed(2)} <span class="text-xs font-bold text-emerald-600">DH</span>`;
-}
+            totalLabel.innerHTML = `${runningSum.toFixed(2)} <span class="text-xs font-bold text-emerald-600">DH</span>`;
+        }
 
-/**
- * تأكيد طلب الكراء
- */
-function confirmRentalOrder() {
-  if (globalCart.length === 0) {
-    Swal.fire({
-      icon: 'error',
-      title: 'Empty Request',
-      text: 'Kindly select at least one item before confirming.',
-      confirmButtonColor: '#ef4444'
-    });
-    return;
-  }
+        /**
+         * تأكيد طلب الكراء
+         */
+        function confirmRentalOrder() {
+            if (globalCart.length === 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Empty Request',
+                    text: 'Kindly select at least one item before confirming.',
+                    confirmButtonColor: '#ef4444'
+                });
+                return;
+            }
 
-  toggleCartModal(false);
+            toggleCartModal(false);
 
-  Swal.fire({
-    icon: 'success',
-    title: 'Rental Order Confirmed!',
-    text: 'Your gear reservation request has been sent successfully.',
-    confirmButtonColor: '#059669',
-    customClass: { popup: 'rounded-2xl' }
-  }).then(() => {
-    globalCart = [];
-    updateCartStatusCounters();
-  });
-}
+            Swal.fire({
+                icon: 'success',
+                title: 'Rental Order Confirmed!',
+                text: 'Your gear reservation request has been sent successfully.',
+                confirmButtonColor: '#059669',
+                customClass: {
+                    popup: 'rounded-2xl'
+                }
+            }).then(() => {
+                globalCart = [];
+                updateCartStatusCounters();
+            });
+        }
 
-/**
- * ربط أزرار الـ Add to Cart بالـ Data Attributes
- */
-document.addEventListener('DOMContentLoaded', function () {
-  document.querySelectorAll('.add-to-cart-btn').forEach(button => {
-    button.addEventListener('click', function () {
-      const id = parseInt(this.getAttribute('data-id'));
-      const name = this.getAttribute('data-name');
-      const img = this.getAttribute('data-image');
-      const price = parseFloat(this.getAttribute('data-price'));
-      const guide = this.getAttribute('data-guide');
+        /**
+         * ربط أزرار الـ Add to Cart بالـ Data Attributes
+         */
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const id = parseInt(this.getAttribute('data-id'));
+                    const name = this.getAttribute('data-name');
+                    const img = this.getAttribute('data-image');
+                    const price = parseFloat(this.getAttribute('data-price'));
+                    const guide = this.getAttribute('data-guide');
 
-      addToCart(id, name, img, price, guide);
-    });
-  });
-});
+                    addToCart(id, name, img, price, guide);
+                });
+            });
+        });
     </script>
 </body>
 

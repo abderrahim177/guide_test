@@ -156,11 +156,13 @@
                     Don't worry! You can rent all these professional supplies and technical gear directly from our local guide upon arrival at very affordable prices, with guaranteed safety and high quality.
                 </p>
                 <div class="pt-4 flex flex-wrap gap-4">
-                    <a href="{{ route('guide_materials', ['id' => $activity->id]) }}"
+                   
+                    <a href="{{ route('guide_materials', ['activity_id' => $activity->id, 'guide_id' => $guide->id]) }}"
                         class="px-6 py-3 bg-white hover:bg-slate-100 text-slate-900 font-bold text-xs rounded-xl shadow-md transition-all flex items-center gap-2 group">
                         <i class="fa-solid fa-boxes-stacked text-sm text-emerald-600 transition-transform group-hover:scale-110"></i>
                         <span>View Guide's Rental Gear</span>
                     </a>
+                   
                 </div>
             </div>
         </div>

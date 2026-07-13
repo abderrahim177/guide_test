@@ -68,7 +68,7 @@ class User extends Authenticatable
     }
     public function rentalEquipments()
 {
-    return $this->belongsToMany(Equipment::class, 'guide_equipments', 'user_id', 'equipment_id')
+    return $this->belongsToMany(Equipment::class, 'guide_equipment', 'user_id', 'equipment_id')
                 ->withPivot('price_per_day', 'stock') // باش تقدر تقرا الثمن والكمية
                 ->withTimestamps();
 }
