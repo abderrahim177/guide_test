@@ -118,17 +118,11 @@
                             <span class="text-base font-black text-slate-950">{{ number_format($currentGuide->pivot->price_per_day ?? 0, 2) }} <span class="text-xs font-bold text-emerald-600">DH</span></span>
                         </div>
 
-                        <button
-                            class="add-to-cart-btn inline-flex items-center gap-1.5 px-3.5 py-2.5 bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white text-xs font-bold rounded-xl transition-all duration-200"
-                            data-id="{{ $equipment->id }}"
-                            data-equipment-id="{{ $equipment->id }}"
-                            data-guide-id="{{ $guide->id ?? ($currentGuide->id ?? '') }}"
-                            data-name="{{ $equipment->name }}"
-                            data-image="{{ asset('materials/' . $equipment->image) }}"
-                            data-price="{{ $currentGuide->pivot->price_per_day ?? 0 }}"
-                            data-guide-name="{{ $guide->name ?? ($currentGuide->name ?? '') }}">
-                            <i class="fa-solid fa-plus text-[10px]"></i>
-                            <span>Add to Basket</span>
+                        <button class="add-to-cart-btn inline-flex items-center gap-1.5 px-3.5 py-2.5 bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white text-xs font-bold rounded-xl transition-all duration-200">
+                            <a href="{{ route('add_to_basket', ['equipment_id' => $equipment->id, 'guide_id' => $guide->id ?? $currentGuide->id]) }}">
+                                <i class="fa-solid fa-plus text-[10px]"></i>
+                                <span>Add to Basket</span>
+                            </a>
                         </button>
                     </div>
                 </div>
@@ -175,15 +169,16 @@
 
         </div>
     </div>
+    @if(session('success'))
+    <input type="hidden" id="laravel-success-msg" value="{{ session('success') }}">
+    @endif
 
+    @if(session('error'))
+    <input type="hidden" id="laravel-error-msg" value="{{ session('error') }}">
+    @endif
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         // Global Memory Array to keep cart state
-        let globalCart = [];
-
-        /**
-         * دالة إظهار وإخفاء الـ Modal باستعمال كلاس hidden
-         */
         function toggleCartModal(show) {
             const modal = document.getElementById('cart-modal');
 
@@ -195,151 +190,37 @@
             }
         }
 
-        /**
-         * دالة إضافة المعدات للسلة
-         */
-        function addToCart(id, name, img, price, guide) {
-            const existingItem = globalCart.find(item => item.id === id);
+        document.addEventListener('DOMContentLoaded', function() {
 
-            if (existingItem) {
+            const successInput = document.getElementById('laravel-success-msg');
+            const errorInput = document.getElementById('laravel-error-msg');
+
+            if (successInput) {
                 Swal.fire({
-                    icon: 'warning',
-                    title: 'Already in Basket!',
-                    text: `"${name}" has already been added to your selection.`,
+                    icon: 'success',
+                    title: 'Added Successfully!',
+                    text: successInput.value,
                     confirmButtonColor: '#059669',
                     customClass: {
                         popup: 'rounded-2xl'
                     }
                 });
-                return;
             }
 
-            globalCart.push({
-                id,
-                name,
-                img,
-                price,
-                guide
-            });
-
-            Swal.fire({
-                icon: 'success',
-                title: 'Added to Basket',
-                text: `"${name}" successfully added.`,
-                showConfirmButton: false,
-                timer: 1500,
-                position: 'top-end',
-                toast: true
-            });
-
-            updateCartStatusCounters();
-        }
-
-        /**
-         * حذف عنصر من السلة
-         */
-        function removeCartItem(id) {
-            globalCart = globalCart.filter(item => item.id !== id);
-            updateCartStatusCounters();
-            renderCartDOM();
-        }
-
-        /**
-         * تحديث العداد
-         */
-        function updateCartStatusCounters() {
-            document.getElementById('cart-count').innerText = globalCart.length;
-        }
-
-        /**
-         * بناء وعرض عناصر السلة ديناميكياً داخل الـ Modal
-         */
-        function renderCartDOM() {
-            const container = document.getElementById('cart-items-container');
-            const totalLabel = document.getElementById('cart-total-price');
-
-            container.innerHTML = '';
-            let runningSum = 0;
-
-            if (globalCart.length === 0) {
-                container.innerHTML = `
-      <div class="text-center py-16 text-slate-300">
-        <i class="fa-solid fa-basket-shopping text-3xl mb-2 block"></i>
-        <p class="text-xs font-medium text-slate-400">Your rental selection is empty.</p>
-      </div>`;
-                totalLabel.innerHTML = `0.00 <span class="text-xs font-bold text-emerald-600">DH</span>`;
-                return;
-            }
-
-            globalCart.forEach(item => {
-                runningSum += item.price;
-
-                const element = document.createElement('div');
-                element.className = "flex items-center gap-3.5 bg-slate-50 p-3.5 rounded-xl border border-slate-100 shadow-sm relative group";
-                element.innerHTML = `
-      <img src="${item.img}" alt="${item.name}" class="w-12 h-12 rounded-lg object-cover bg-white border border-slate-200">
-      <div class="flex-1 min-w-0">
-        <h4 class="text-xs font-bold text-slate-900 truncate">${item.name}</h4>
-        <span class="text-[9px] text-slate-400 font-medium block">Guide: ${item.guide}</span>
-        <span class="text-xs font-bold text-slate-950 block mt-0.5">${item.price.toFixed(2)} DH</span>
-      </div>
-      <button onclick="removeCartItem(${item.id})" class="h-7 w-7 rounded-lg bg-red-50 hover:bg-red-500 text-red-600 hover:text-white flex items-center justify-center transition-colors">
-        <i class="fa-solid fa-trash-can text-[10px]"></i>
-      </button>
-    `;
-                container.appendChild(element);
-            });
-
-            totalLabel.innerHTML = `${runningSum.toFixed(2)} <span class="text-xs font-bold text-emerald-600">DH</span>`;
-        }
-
-        /**
-         * تأكيد طلب الكراء
-         */
-        function confirmRentalOrder() {
-            if (globalCart.length === 0) {
+            if (errorInput) {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Empty Request',
-                    text: 'Kindly select at least one item before confirming.',
-                    confirmButtonColor: '#ef4444'
+                    title: 'Oops...',
+                    text: errorInput.value,
+                    confirmButtonColor: '#ef4444',
+                    customClass: {
+                        popup: 'rounded-2xl'
+                    }
                 });
-                return;
             }
-
-            toggleCartModal(false);
-
-            Swal.fire({
-                icon: 'success',
-                title: 'Rental Order Confirmed!',
-                text: 'Your gear reservation request has been sent successfully.',
-                confirmButtonColor: '#059669',
-                customClass: {
-                    popup: 'rounded-2xl'
-                }
-            }).then(() => {
-                globalCart = [];
-                updateCartStatusCounters();
-            });
-        }
-
-        /**
-         * ربط أزرار الـ Add to Cart بالـ Data Attributes
-         */
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.add-to-cart-btn').forEach(button => {
-                button.addEventListener('click', function() {
-                    const id = parseInt(this.getAttribute('data-id'));
-                    const name = this.getAttribute('data-name');
-                    const img = this.getAttribute('data-image');
-                    const price = parseFloat(this.getAttribute('data-price'));
-                    const guide = this.getAttribute('data-guide');
-
-                    addToCart(id, name, img, price, guide);
-                });
-            });
         });
     </script>
+
 </body>
 
 </html>

@@ -16,17 +16,15 @@ class MaterialsController extends Controller
     
     $firstEquipment = $equipments->first();
     $guide = null;
-    
     if ($firstEquipment) {
-        $currentGuide = GuideEquipment::where('equipment_id', $firstEquipment->id)->first();
-            
+        $currentGuide = GuideEquipment::where('equipment_id', $firstEquipment->id)->first();  
         if ($currentGuide) {
             $guide = User::find($currentGuide->user_id);
         }
     }
-
     return view('activity_materials', compact('equipments', 'activity', 'guide'));
 }
+
 public function guideMaterilas($activity_id, $guide_id)
 {
     $rentalItems = Equipment::where('activity_id', $activity_id)

@@ -6,6 +6,7 @@ use App\Http\Controllers\GetaileController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MaterialsController;
+use App\Http\Controllers\CartController;
 Route::get('/', [GuideController::class, 'getGuides'])->name('home');
 Route::middleware('guest')->group(function () {    
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -23,5 +24,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/details_places/{id}', [PlaceController::class , 'details_places'])->name('detaile_place');
     Route::get('/materilas/{id}/materils' , [MaterialsController::class , 'getmaterials'])->name('activity_materials');
     Route::get('/guide_materilas/{activity_id}/{guide_id}' , [MaterialsController::class , 'guideMaterilas'])->name('guide_materials');
+    Route::get('/add-to-basket/{equipment_id}/{guide_id}', [CartController::class, 'addToBasket'])->name('add_to_basket')->middleware('auth');
 });
 
