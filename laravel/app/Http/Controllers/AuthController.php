@@ -8,38 +8,67 @@ use App\Http\Requests\registerRequest;
 use App\Http\Requests\loginRequest;
 use App\Models\User; 
 use Illuminate\Support\Facades\Hash;
+
 class AuthController extends Controller
 {
-    public function showRegister()
+    // 1. Register (Inscription)
+    public function save(registerRequest $request) 
     {
-        return view('auth.register'); 
-    }
-
-    public function showLogin()
-    {
-        return view('auth.login'); 
-    }
-    public function save(registerRequest $request) {
-        $credentials = $request->validated();
-        $credentials['password'] = Hash::make($credentials['password']);
-        User::create($credentials);
-        return redirect()->route('/')->with('success', 'Account created successfully! You can now log in.');
-    }
-    public function check(loginRequest $request){
         $credentials = $request->validated();
         
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            return redirect()->intended('/');
-        }
-        return back()->withErrors([
-            'email' => 'votre information et incorrect !',
-        ]);
+        // Hash password
+        $credentials['password'] = Hash::make($credentials['password']);
+        $credentials['role_id'] = $request->role_id ?? 3;
+        // Create user
+        $user = User::create($credentials);
+
+        // Kriya token f Sanctum
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'message' => 'User registered successfully',
+            'user' => $user,
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+        ], 201);
     }
-    public function logout(Request $request){
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-        return redirect('/login')->with('success', 'Logged out successfully!');
+
+    // 2. Login (Connexion)
+    public function check(loginRequest $request)
+    {
+        $credentials = $request->validated();
+
+        // Verifier email o password
+        if (!Auth::attempt($credentials)) {
+            return response()->json([
+                'message' => 'votre information est incorrecte !'
+            ], 401);
+        }
+
+        $user = User::where('email', $request->email)->firstOrFail();
+
+        // Delete les anciens tokens (Optionnel)
+        $user->tokens()->delete();
+
+        // Kriya token jdid
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'message' => 'Login success',
+            'user' => $user,
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+        ], 200);
+    }
+
+    // 3. Logout (Déconnexion)
+    public function logout(Request $request)
+    {
+        // Supprimer l-token lli khaddamm bih dbba
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'message' => 'Logged out successfully!'
+        ], 200);
     }
 }

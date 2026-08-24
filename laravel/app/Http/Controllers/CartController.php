@@ -11,21 +11,32 @@ use Illuminate\Support\Facades\DB;
 
 class CartController extends Controller
 {
-    public function addToBasket($equipment_id, $guide_id)
+    public function addToBasket(Request $request)
     {
-        $user_id = Auth::id(); 
+        // 1. Validation d l-données lli jayin min React
+        $request->validate([
+            'equipment_id' => 'required|exists:equipment,id',
+            'guide_id'     => 'required|exists:users,id',
+        ]);
 
+        $equipment_id = $request->equipment_id;
+        $guide_id     = $request->guide_id;
+        $user_id      = Auth::id(); 
+
+        // T-akkat blli l-user connecté (Déjà Sanctuum ki-gère hadi, walakin ziadat ta'kid)
         if (!$user_id) {
-            return redirect()->back()->with('error', 'Kindly log in first before checking out.');
+            return response()->json([
+                'message' => 'Kindly log in first before checking out.'
+            ], 401);
         }
 
-        // 1. كنجيبو الماتريال باش نعرفو الثمن ديالو من الـ pivot
+        // 2. Najibo l-equipment o n-tal3o price_per_day min l-pivot table
         $equipment = Equipment::findOrFail($equipment_id);
         $currentGuide = $equipment->guides()->where('user_id', $guide_id)->first();
         
         $price = $currentGuide ? $currentGuide->pivot->price_per_day : 0;
 
-        // 2. كنقلبو على سلة مفتوحة أو نكرييو وحدة جديدة
+        // 3. N-qllbo ʿla order 'pending' awla n-kriyyo waḥda jdida
         $order = Order::firstOrCreate(
             [
                 'user_id' => $user_id,
@@ -37,7 +48,7 @@ class CartController extends Controller
             ]
         );
 
-        // 3. كنشوفو واش الماتريال ديجا كاين ف السلة
+        // 4. N-choufo واش l-item déjà f l-panier
         $orderItem = OrderItem::where('order_id', $order->id)
             ->where('equipment_id', $equipment_id)
             ->first();
@@ -45,7 +56,6 @@ class CartController extends Controller
         if ($orderItem) {
             $orderItem->increment('quantity');
         } else {
-            // 👈 التعديل هنا: عمرنا الكولون الحقيقي price_per_day اللي كاين ف الداتابيز ديالك
             OrderItem::create([
                 'order_id'      => $order->id,
                 'equipment_id'  => $equipment_id,
@@ -54,13 +64,17 @@ class CartController extends Controller
             ]);
         }
 
-        // 4. كنحدثو الثمن الإجمالي باستعمال الكولون الجديد price_per_day
+        // 5. N-calculiw l-total jdid
         $total = OrderItem::where('order_id', $order->id)
             ->select(DB::raw('SUM(price_per_day * quantity) as total'))
             ->value('total');
 
         $order->update(['total_price' => $total ?? 0]);
 
-        return redirect()->back()->with('success', 'Material added to your basket successfully!');
+        // 6. Return JSON response l React
+        return response()->json([
+            'message' => 'Material added to your basket successfully!',
+            'order'   => $order->load('items.equipment') // Kat-rje' l-order b l-items dyalha
+        ], 200);
     }
 }
