@@ -1,59 +1,61 @@
-import React, { useState } from 'react';
-import { 
-  MapPin, 
-  Search, 
-  ShieldCheck, 
-  Star, 
-  Users, 
-  ChevronDown, 
-  ArrowDown 
-} from 'lucide-react';
+import React, { useState } from "react";
+import {
+  MapPin,
+  Search,
+  ShieldCheck,
+  Star,
+  Users,
+  ChevronDown,
+  ArrowDown,
+} from "lucide-react";
 
 const HeroSection = () => {
-  const [selectedLocation, setSelectedLocation] = useState('');
-  const [selectedActivity, setSelectedActivity] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState("");
+  const [selectedActivity, setSelectedActivity] = useState("");
 
   const locations = [
-    { id: 'azilal', name: 'Azilal (Aït Bouguemez)' },
-    { id: 'bin_el_ouidane', name: 'Bin El Ouidane' },
-    { id: 'ouzoud', name: 'Ouzoud Waterfalls' },
-    { id: 'toubkal', name: 'Toubkal / High Atlas' },
-    { id: 'merzouga', name: 'Merzouga Dunes' },
+    { id: "azilal", name: "Azilal (Aït Bouguemez)" },
+    { id: "bin_el_ouidane", name: "Bin El Ouidane" },
+    { id: "ouzoud", name: "Ouzoud Waterfalls" },
+    { id: "toubkal", name: "Toubkal / High Atlas" },
+    { id: "merzouga", name: "Merzouga Dunes" },
   ];
 
   const activities = [
-    { id: 'trekking', name: 'Trekking & Hiking' },
-    { id: 'camping', name: 'Mountain Camping' },
-    { id: 'kayak', name: 'Lake Kayaking' },
-    { id: 'climbing', name: 'Rock Climbing' },
+    { id: "trekking", name: "Trekking & Hiking" },
+    { id: "camping", name: "Mountain Camping" },
+    { id: "kayak", name: "Lake Kayaking" },
+    { id: "climbing", name: "Rock Climbing" },
   ];
 
   const handleSearch = (e) => {
     e.preventDefault();
     if (!selectedLocation && !selectedActivity) {
-      alert('Veuillez sélectionner une destination ou une activité.');
+      alert("Veuillez sélectionner une destination ou une activité.");
       return;
     }
-    console.log('Searching for:', { location: selectedLocation, activity: selectedActivity });
+    console.log("Searching for:", {
+      location: selectedLocation,
+      activity: selectedActivity,
+    });
   };
 
   // Scroll function for arrow indicator
   const handleScrollDown = () => {
-    const guidesSection = document.getElementById('guides');
+    const guidesSection = document.getElementById("guides");
     if (guidesSection) {
-      guidesSection.scrollIntoView({ behavior: 'smooth' });
+      guidesSection.scrollIntoView({ behavior: "smooth" });
     }
   };
 
   return (
     <div className="relative min-h-[calc(100vh-53px)] bg-[#111612] text-white font-sans flex flex-col justify-between">
-      
       {/* ----------------- BACKGROUND IMAGE (WITH OVERFLOW HIDDEN ONLY HERE) ----------------- */}
       <div className="absolute inset-0 overflow-hidden z-0">
-        <div 
+        <div
           className="w-full h-full bg-cover bg-center scale-105 transition-transform duration-1000"
-          style={{ 
-            backgroundImage: `url('https://images.unsplash.com/photo-1548013146-72479768bada?q=80&w=2000&auto=format&fit=crop')` 
+          style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2000&auto=format&fit=crop')`,
           }}
         ></div>
         {/* Dark Overlay Gradient */}
@@ -62,12 +64,10 @@ const HeroSection = () => {
 
       {/* ----------------- HERO CONTENT ----------------- */}
       <main className="relative z-10 flex-1 flex flex-col items-center justify-center text-center px-4 py-12">
-        
         <div className="max-w-2xl mx-auto space-y-4">
-          
           {/* Title */}
           <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-white leading-tight drop-shadow-md">
-            Explore Morocco with{' '}
+            Explore Morocco with{" "}
             <span className="italic font-serif font-normal text-[#D4AF37]">
               Expert Local Guides
             </span>
@@ -75,13 +75,13 @@ const HeroSection = () => {
 
           {/* Subtitle */}
           <p className="text-gray-200 text-xs md:text-sm max-w-md mx-auto font-light leading-relaxed opacity-90 drop-shadow">
-            From Toubkal summits to Sahara dunes — every trail led by someone who calls it home.
+            From Toubkal summits to Sahara dunes — every trail led by someone
+            who calls it home.
           </p>
 
           {/* ----------------- SEARCH FILTER BAR (ACTIVE) ----------------- */}
           <form onSubmit={handleSearch} className="pt-4">
             <div className="bg-[#FAF9F6] text-gray-800 p-1.5 md:p-2 rounded-xl md:rounded-full shadow-2xl max-w-xl mx-auto flex flex-col md:flex-row items-center gap-1 border border-white/20">
-              
               {/* Location Select */}
               <div className="flex-1 w-full flex items-center gap-2 px-3 py-1.5 border-b md:border-b-0 md:border-r border-gray-200/80">
                 <MapPin className="w-4 h-4 text-[#1C3A27] shrink-0" />
@@ -89,7 +89,7 @@ const HeroSection = () => {
                   <label className="block text-[9px] font-bold text-gray-400 uppercase tracking-wider">
                     Location
                   </label>
-                  <select 
+                  <select
                     value={selectedLocation}
                     onChange={(e) => setSelectedLocation(e.target.value)}
                     className="w-full bg-transparent text-xs font-semibold text-gray-800 outline-none cursor-pointer appearance-none pr-4"
@@ -112,7 +112,7 @@ const HeroSection = () => {
                   <label className="block text-[9px] font-bold text-gray-400 uppercase tracking-wider">
                     Activity
                   </label>
-                  <select 
+                  <select
                     value={selectedActivity}
                     onChange={(e) => setSelectedActivity(e.target.value)}
                     className="w-full bg-transparent text-xs font-semibold text-gray-800 outline-none cursor-pointer appearance-none pr-4"
@@ -129,14 +129,13 @@ const HeroSection = () => {
               </div>
 
               {/* Search Button */}
-              <button 
+              <button
                 type="submit"
                 className="w-full md:w-auto bg-[#1C3A27] hover:bg-[#152c1e] text-white px-5 py-2.5 rounded-lg md:rounded-full text-xs font-semibold flex items-center justify-center gap-1.5 transition-all duration-200 shadow-md shrink-0 cursor-pointer active:scale-95"
               >
                 <Search className="w-3.5 h-3.5" />
                 <span>Search</span>
               </button>
-
             </div>
           </form>
 
@@ -155,13 +154,12 @@ const HeroSection = () => {
               <span>12k+ travelers</span>
             </div>
           </div>
-
         </div>
       </main>
 
       {/* Scroll Indicator */}
       <footer className="relative z-10 pb-4 text-center">
-        <div 
+        <div
           onClick={handleScrollDown}
           className="inline-flex flex-col items-center gap-0.5 text-[9px] text-gray-400 tracking-widest uppercase cursor-pointer hover:text-white transition-colors"
         >
@@ -169,7 +167,6 @@ const HeroSection = () => {
           <ArrowDown className="w-2.5 h-2.5 animate-bounce" />
         </div>
       </footer>
-
     </div>
   );
 };
