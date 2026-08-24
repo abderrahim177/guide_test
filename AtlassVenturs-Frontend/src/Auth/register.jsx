@@ -20,36 +20,45 @@ export default function RegisterPage() {
     }));
   };
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setErrors([]);
-    if (!formData.terms) {
-      setErrors(["Veuillez accepter les conditions d'utilisation."]);
-      return;
-    }
-    setLoading(true);
-    try {
-      const response = await axios.post('http://localhost:8000/api/register', {
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-      });
-      if (response.data.token) {
-        localStorage.setItem('token', response.data.token);
-        localStorage.setItem('user', JSON.stringify(response.data.user));
-        navigate('/student');
+  e.preventDefault();
+  setErrors([]);
+
+  if (!formData.terms) {
+    setErrors(["Veuillez accepter les conditions d'utilisation."]);
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    const response = await axios.post('http://localhost:8000/api/register', {
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+    }, {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
       }
-    } catch (err) {
-      console.error('Register Error:', err);
-      if (err.response?.data?.errors) {
-        const validationErrors = Object.values(err.response.data.errors).flat();
-        setErrors(validationErrors);
-      } else {
-        setErrors([err.response?.data?.message || 'Une erreur est survenue.']);
-      }
-    } finally {
-      setLoading(false);
+    });
+
+    if (response.data.access_token) {
+      localStorage.setItem('token', response.data.access_token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+      navigate('/');
     }
-  };
+  } catch (err) {
+    console.error('Register Error:', err);
+    if (err.response?.data?.errors) {
+      const validationErrors = Object.values(err.response.data.errors).flat();
+      setErrors(validationErrors);
+    } else {
+      setErrors([err.response?.data?.message || 'Une erreur est survenue.']);
+    }
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-[85vh] bg-slate-100 flex items-center justify-center p-4 sm:p-6 font-sans">

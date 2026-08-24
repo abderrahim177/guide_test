@@ -1,13 +1,14 @@
+import axios from 'axios';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-
+import { useNavigate } from 'react-router-dom';
 export default function LoginPage() {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     remember: false
   });
-
+const navigate = useNavigate();
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
@@ -16,9 +17,36 @@ export default function LoginPage() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit =  async(e) => {
     e.preventDefault();
-    console.log('Form Submitted:', formData);
+    try{
+        const response = await axios.post('/login' , 
+        {
+        email :formData.email,
+        password : formData.password
+        },{
+        headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      }
+    });
+    if(response.data.access_token){
+        localStorage.setItem('token' , response.data.access_token)
+        localStorage.setItem('user' , JSON.stringify(response.data.user))
+        navigate('/')
+    }
+    }catch (err) {
+    console.error('Register Error:', err);
+    if (err.response?.data?.errors) {
+      const validationErrors = Object.values(err.response.data.errors).flat();
+      setErrors(validationErrors);
+    } else {
+      setErrors([err.response?.data?.message || 'Une erreur est survenue.']);
+    }
+  } finally {
+    setLoading(false);
+  }
+    
   };
 
   return (

@@ -20,8 +20,11 @@ class AuthController extends Controller
         $credentials['password'] = Hash::make($credentials['password']);
         $credentials['role_id'] = $request->role_id ?? 3;
         // Create user
-        $user = User::create($credentials);
-
+        $user = User::create([
+            "name" => $credentials['name'],
+            "email" => $credentials['email'],
+            "password" => $credentials['password']
+        ]);
         // Kriya token f Sanctum
         $token = $user->createToken('auth_token')->plainTextToken;
 
