@@ -10,11 +10,9 @@ import {
 } from 'lucide-react';
 
 const HeroSection = () => {
-  // States للـ Filters
   const [selectedLocation, setSelectedLocation] = useState('');
   const [selectedActivity, setSelectedActivity] = useState('');
 
-  // قائمة المناطق
   const locations = [
     { id: 'azilal', name: 'Azilal (Aït Bouguemez)' },
     { id: 'bin_el_ouidane', name: 'Bin El Ouidane' },
@@ -23,7 +21,6 @@ const HeroSection = () => {
     { id: 'merzouga', name: 'Merzouga Dunes' },
   ];
 
-  // قائمة الأنشطة
   const activities = [
     { id: 'trekking', name: 'Trekking & Hiking' },
     { id: 'camping', name: 'Mountain Camping' },
@@ -31,7 +28,6 @@ const HeroSection = () => {
     { id: 'climbing', name: 'Rock Climbing' },
   ];
 
-  // دالة البحث
   const handleSearch = (e) => {
     e.preventDefault();
     if (!selectedLocation && !selectedActivity) {

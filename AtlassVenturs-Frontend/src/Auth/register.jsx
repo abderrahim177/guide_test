@@ -1,25 +1,54 @@
+import axios from 'axios';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-
+import { useNavigate } from 'react-router-dom';
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
-    terms: false
+    terms: false,
   });
-
-  const handleChange = (e) => {
+  const [errors, setErrors] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+ const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === 'checkbox' ? checked : value,
     }));
   };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Register Form Submitted:', formData);
+    setErrors([]);
+    if (!formData.terms) {
+      setErrors(["Veuillez accepter les conditions d'utilisation."]);
+      return;
+    }
+    setLoading(true);
+    try {
+      const response = await axios.post('http://localhost:8000/api/register', {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      });
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+        navigate('/student');
+      }
+    } catch (err) {
+      console.error('Register Error:', err);
+      if (err.response?.data?.errors) {
+        const validationErrors = Object.values(err.response.data.errors).flat();
+        setErrors(validationErrors);
+      } else {
+        setErrors([err.response?.data?.message || 'Une erreur est survenue.']);
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -158,6 +187,7 @@ export default function RegisterPage() {
 
               {/* Submit Button */}
               <button 
+              onClick={handleSubmit}
                 type="submit" 
                 className="w-full bg-emerald-800 hover:bg-emerald-900 active:scale-[0.99] text-white font-semibold py-3 rounded-xl text-xs transition-all shadow-md shadow-emerald-900/10 mt-2 cursor-pointer"
               >
