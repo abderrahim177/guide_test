@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Compass } from 'lucide-react';
-
+import { useNavigate } from 'react-router-dom';
 const Navbar = () => {
   const [activeTab, setActiveTab] = useState('hero');
-
+  const navigate = useNavigate();
   const scrollToSection = (e, id) => {
     e.preventDefault();
     setActiveTab(id);
@@ -64,10 +64,10 @@ const Navbar = () => {
 
       {/* Auth Buttons */}
       <div className="flex items-center gap-3 text-xs">
-        <button className="font-semibold text-gray-700 hover:text-black transition-colors px-2 py-1">
+        <button onClick={() => navigate('/login')} className="font-semibold text-gray-700 hover:text-black transition-colors px-2 py-1">
           Connexion
         </button>
-        <button className="bg-[#1C3A27] hover:bg-[#152c1e] text-white px-4 py-1.5 rounded-full font-medium transition-all shadow-sm">
+        <button onClick={() => navigate('/register')} className="bg-[#1C3A27] hover:bg-[#152c1e] text-white px-4 py-1.5 rounded-full font-medium transition-all shadow-sm">
           S'inscrire
         </button>
       </div>
