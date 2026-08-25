@@ -38,7 +38,6 @@ function App() {
 
           {/* Guide Dashboard (Nested Routes) */}
           <Route path="/guide" element={<GuideDashboardLayout />}>
-            {/* التوجيه التلقائي فاش يدخل لـ /guide يمشي لـ requests */}
             <Route index element={<Navigate to="/guide/requests" replace />} />
             
             <Route path="requests" element={<RequestsPage />} />
