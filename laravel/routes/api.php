@@ -10,12 +10,6 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MaterialsController;
 use App\Http\Controllers\CartController;
 
-/*
-|--------------------------------------------------------------------------
-| Public Routes (Ayy waḥed y-qdar y-dkhol lihum bla Token)
-|--------------------------------------------------------------------------
-*/
-
 // Authentication (Register & Login)
 Route::post('/register', [AuthController::class, 'save']);
 Route::post('/login', [AuthController::class, 'check']);
@@ -30,23 +24,28 @@ Route::get('/details_places/{id}', [PlaceController::class, 'details_places']);
 Route::get('/materials/{id}', [MaterialsController::class, 'getmaterials']);
 Route::get('/guide_materials/{activity_id}/{guide_id}', [MaterialsController::class, 'guideMaterilas']);
 
-
 /*
 |--------------------------------------------------------------------------
-| Protected Routes (Khass l-user y-kun connecté b Sanctum Token)
+| Protected Routes
 |--------------------------------------------------------------------------
 */
-
 Route::middleware('auth:sanctum')->group(function () {
 
-    // User Info & Profile
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
-    
-    Route::get('/profile', [ProfileController::class, 'profile']);
-    Route::post('/logout', [AuthController::class, 'logout']);
 
-    // Cart / Basket Actions
-    Route::post('/cart/add', [CartController::class, 'addToBasket']);
+    Route::middleware(\App\Http\Middleware\RoleMiddleware::class . ':3')->group(function () {
+        Route::get('/guides', [GuideController::class, 'getGuides']);
+        Route::get('/places', [PlaceController::class, 'index']);
+        Route::get('/materials/{id}', [MaterialsController::class, 'getmaterials']);
+        Route::get('/guide_materials/{activity_id}/{guide_id}', [MaterialsController::class, 'guideMaterilas']);
+        Route::post('/cart/add', [CartController::class, 'addToBasket']);
+    }); 
+
+    Route::middleware(\App\Http\Middleware\RoleMiddleware::class . ':2')->group(function () {
+        Route::post('/create', [GuideController::class, 'create']); 
+    }); 
+
+    Route::post('/logout', [AuthController::class, 'logout']);
 });

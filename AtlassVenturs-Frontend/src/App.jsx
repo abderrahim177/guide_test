@@ -9,7 +9,10 @@ import Footer from './components/footer';
 import LoginPage from './Auth/login';
 import RegisterPage from './Auth/register';
 
-// Dashboard Imports
+// ProtectedRoute Component Import
+import ProtectedRoute from './components/ProtectedRoute';
+
+// Dashboard Imports (خاصين بالـ Guide)
 import GuideDashboardLayout from './Guides/GuideDashboardLayout';
 import RequestsPage from './Guides/RequestsPage';
 import ConfirmedBookings from './Guides/ConfirmedBookings';
@@ -30,22 +33,31 @@ function App() {
 
       <main className="grow">
         <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<><HeroSection /><GuideSection /></>} />
-          <Route path="/guides/:id" element={<GuideProfilePage />} />
+          
+          {/* Public Auth Routes */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-
-          {/* Guide Dashboard (Nested Routes) */}
-          <Route path="/guide" element={<GuideDashboardLayout />}>
-            <Route index element={<Navigate to="/guide/requests" replace />} />
-            
-            <Route path="requests" element={<RequestsPage />} />
-            <Route path="confirmed" element={<ConfirmedBookings />} />
-            <Route path="equipment" element={<EquipmentRent />} />
-            <Route path="calendar" element={<GuideCalendar />} />
-            <Route path="settings" element={<GuideSettings />} />
+          
+          {/* 1. Routes خاصة فقط بالـ Visitor (role_id = 3) */}
+          <Route element={<ProtectedRoute allowedRoles={[3]} />}>
+            <Route path="/" element={<><HeroSection /><GuideSection /></>} />
+            <Route path="/guides/:id" element={<GuideProfilePage />} />
           </Route>
+
+          {/* 2. Routes خاصة فقط بالـ Guide (role_id = 2) */}
+          <Route element={<ProtectedRoute allowedRoles={[2]} />}>
+            <Route path="/guide" element={<GuideDashboardLayout />}>
+              <Route index element={<Navigate to="/guide/requests" replace />} />
+              <Route path="requests" element={<RequestsPage />} />
+              <Route path="confirmed" element={<ConfirmedBookings />} />
+              <Route path="equipment" element={<EquipmentRent />} />
+              <Route path="calendar" element={<GuideCalendar />} />
+              <Route path="settings" element={<GuideSettings />} />
+            </Route>
+          </Route>
+
+          {/* 3. Catch-all Fallback Route */}
+          <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </main>
 
