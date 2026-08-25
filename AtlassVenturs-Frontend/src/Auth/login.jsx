@@ -33,10 +33,17 @@ const navigate = useNavigate();
     });
 
     if (response.data.access_token) {
-      localStorage.setItem('token', response.data.access_token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
-      navigate('/');
-    }
+  const user = response.data.user;
+
+  localStorage.setItem('token', response.data.access_token);
+  localStorage.setItem('user', JSON.stringify(user));
+
+  if (user.role === 2) {
+    navigate('/guide');
+  } else {
+    navigate('/');
+  }
+}
   } catch (err) {
     console.error('Login Error:', err);
     if (err.response?.data?.errors) {
