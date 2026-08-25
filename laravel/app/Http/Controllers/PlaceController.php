@@ -13,7 +13,6 @@ class PlaceController extends Controller
     {
         $places = Activity::all();   
         $locations = Region::all();  
-
         return response()->json([
             'status'    => 'success',
             'places'    => $places,

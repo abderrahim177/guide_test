@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   MapPin,
   Search,
@@ -7,18 +7,22 @@ import {
   Users,
   ChevronDown,
   ArrowDown,
+  LogIn,
 } from "lucide-react";
+import axios from "axios";
+import { Await } from "react-router-dom";
 
 const HeroSection = () => {
   const [selectedLocation, setSelectedLocation] = useState("");
   const [selectedActivity, setSelectedActivity] = useState("");
-
+  const [data , setdata] = useState([])
+  const [loading , setloading] = useState(false)
+  const [error , seterror] = useState(false)
   const locations = [
-    { id: "azilal", name: "Azilal (Aït Bouguemez)" },
     { id: "bin_el_ouidane", name: "Bin El Ouidane" },
     { id: "ouzoud", name: "Ouzoud Waterfalls" },
-    { id: "toubkal", name: "Toubkal / High Atlas" },
-    { id: "merzouga", name: "Merzouga Dunes" },
+    { id: "Bougmaze", name: "Bougmaze / High Atlas" },
+    { id: "Zawit_Ahansale", name: "Merzouga Dunes" },
   ];
 
   const activities = [
@@ -28,12 +32,33 @@ const HeroSection = () => {
     { id: "climbing", name: "Rock Climbing" },
   ];
 
-  const handleSearch = (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault();
-    if (!selectedLocation && !selectedActivity) {
-      alert("Veuillez sélectionner une destination ou une activité.");
-      return;
+    setloading(true)
+      const token = localStorage.getItem('token')
+      try{
+        const response = await axios.get('/places' , {
+          headers: { 
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+         },
+        });
+        const dataArray = Array.isArray(response.data)
+        ? res.data
+        : res.data.data || [];
+
+        setdata(response.data)
+      }catch(err){
+      console.log(err);
+      seterror('imposible de charger data')
+    }finally{
+      setloading(false)
     }
+
+    useEffect(()=> {
+      handleSearch()
+    }, [])
+
     console.log("Searching for:", {
       location: selectedLocation,
       activity: selectedActivity,

@@ -8,6 +8,7 @@ export default function LoginPage() {
     password: '',
     remember: false
   });
+  const [error , seterror] = useState(false)
 const navigate = useNavigate();
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -17,37 +18,35 @@ const navigate = useNavigate();
     }));
   };
 
-  const handleSubmit =  async(e) => {
-    e.preventDefault();
-    try{
-        const response = await axios.post('/login' , 
-        {
-        email :formData.email,
-        password : formData.password
-        },{
-        headers: {
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  seterror(false);
+  try {
+    const response = await axios.post('http://localhost:8000/api/login', {
+      email: formData.email,
+      password: formData.password
+    }, {
+      headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       }
     });
-    if(response.data.access_token){
-        localStorage.setItem('token' , response.data.access_token)
-        localStorage.setItem('user' , JSON.stringify(response.data.user))
-        navigate('/')
+
+    if (response.data.access_token) {
+      localStorage.setItem('token', response.data.access_token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+      navigate('/');
     }
-    }catch (err) {
-    console.error('Register Error:', err);
+  } catch (err) {
+    console.error('Login Error:', err);
     if (err.response?.data?.errors) {
       const validationErrors = Object.values(err.response.data.errors).flat();
-      setErrors(validationErrors);
+      seterror(validationErrors);
     } else {
-      setErrors([err.response?.data?.message || 'Une erreur est survenue.']);
+      seterror([err.response?.data?.message || 'Une erreur est survenue.']);
     }
-  } finally {
-    setLoading(false);
   }
-    
-  };
+};
 
   return (
     <div className="min-h-[85vh] bg-slate-100 flex items-center justify-center p-4 sm:p-6 font-sans">

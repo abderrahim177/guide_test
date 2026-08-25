@@ -36,22 +36,6 @@ export default function GuideProfilePage({ guideData }) {
 
   return (
     <div className="min-h-screen bg-stone-50/50 text-stone-800 font-['Poppins',sans-serif]">
-      
-      {/* Top Bar Navigation */}
-      <div className="bg-white border-b border-stone-200 sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <button
-            onClick={() => window.history.back()}
-            className="inline-flex items-center gap-2 text-xs font-semibold text-stone-700 hover:text-stone-900 transition-colors cursor-pointer"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Back to Guides</span>
-          </button>
-          <span className="text-xs font-medium text-stone-500">
-            Official Guide Profile
-          </span>
-        </div>
-      </div>
 
       {/* Main Page Content Header */}
       <div className="bg-white border-b border-stone-200">

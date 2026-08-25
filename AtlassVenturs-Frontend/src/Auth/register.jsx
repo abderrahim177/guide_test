@@ -22,14 +22,11 @@ export default function RegisterPage() {
   const handleSubmit = async (e) => {
   e.preventDefault();
   setErrors([]);
-
   if (!formData.terms) {
     setErrors(["Veuillez accepter les conditions d'utilisation."]);
     return;
   }
-
   setLoading(true);
-
   try {
     const response = await axios.post('http://localhost:8000/api/register', {
       name: formData.name,
