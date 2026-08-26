@@ -18,6 +18,7 @@ const HeroSection = () => {
   const [error, seterror] = useState(false);
   const [places, setPlaces] = useState([]);
   const [locations, setLocations] = useState([]);
+  const [activity, setactivity] = useState([]);
 
   const fetchInitialData = async () => {
     setloading(true);
@@ -40,8 +41,30 @@ const HeroSection = () => {
     }
   };
 
+  const getAllActivities = async () => {
+    setloading(true);
+    const token = localStorage.getItem("token");
+    try {
+      const res = await axios.get("http://localhost:8000/api/Activities", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      });
+      setactivity(res.data);
+      console.log(res.data);
+    } catch (err) {
+      console.error(err);
+      seterror("Impossible de charger les données");
+    } finally {
+      setloading(false);
+    }
+  };
+
   useEffect(() => {
     fetchInitialData();
+    getAllActivities();
   }, []);
 
   const handleSearch = (e) => {
@@ -52,7 +75,6 @@ const HeroSection = () => {
     });
   };
 
-  // Scroll function for arrow indicator
   const handleScrollDown = () => {
     const guidesSection = document.getElementById("guides");
     if (guidesSection) {
@@ -91,8 +113,7 @@ const HeroSection = () => {
           {/* SEARCH FILTER BAR */}
           <form onSubmit={handleSearch} className="pt-4">
             <div className="bg-[#FAF9F6] text-gray-800 p-1.5 md:p-2 rounded-xl md:rounded-full shadow-2xl max-w-xl mx-auto flex flex-col md:flex-row items-center gap-1 border border-white/20">
-              
-              {/* Location Select (ديناميكي من Laravel) */}
+              {/* Location Select */}
               <div className="flex-1 w-full flex items-center gap-2 px-3 py-1.5 border-b md:border-b-0 md:border-r border-gray-200/80">
                 <MapPin className="w-4 h-4 text-[#1C3A27] shrink-0" />
                 <div className="text-left w-full">
@@ -117,7 +138,7 @@ const HeroSection = () => {
                 <ChevronDown className="w-3 h-3 text-gray-400 pointer-events-none -ml-3" />
               </div>
 
-              {/* Activity Select (ديناميكي من Laravel عبر places) */}
+              {/* Activity Select */}
               <div className="flex-1 w-full flex items-center gap-2 px-3 py-1.5">
                 <span className="text-sm">🧗</span>
                 <div className="text-left w-full">
@@ -134,7 +155,7 @@ const HeroSection = () => {
                     </option>
                     {places.map((place) => (
                       <option key={place.id} value={place.id}>
-                        {place.name }
+                        {place.name}
                       </option>
                     ))}
                   </select>

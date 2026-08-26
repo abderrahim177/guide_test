@@ -15,10 +15,8 @@ class MaterialsController extends Controller
     {
         $activity = Activity::findOrFail($id);
         $equipments = Equipment::where('activity_id', $id)->get();
-        
         $firstEquipment = $equipments->first();
         $guide = null;
-
         if ($firstEquipment) {
             $currentGuide = GuideEquipment::where('equipment_id', $firstEquipment->id)->first();  
             if ($currentGuide) {
@@ -57,5 +55,9 @@ class MaterialsController extends Controller
             'guide'       => $guide,
             'rentalItems' => $rentalItems
         ], 200);
+    }
+    public function getActivities(Request $request){
+        $activities = Activity::all();
+        return response()->json($activities , 200);
     }
 }

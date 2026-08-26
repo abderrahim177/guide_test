@@ -9,6 +9,7 @@ use App\Http\Controllers\GetaileController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MaterialsController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CreatEquipmentsController;
 
 // Authentication (Register & Login)
 Route::post('/register', [AuthController::class, 'save']);
@@ -44,7 +45,9 @@ Route::middleware('auth:sanctum')->group(function () {
     }); 
 
     Route::middleware(\App\Http\Middleware\RoleMiddleware::class . ':2')->group(function () {
-        Route::post('/create', [GuideController::class, 'create']); 
+        Route::post('/create', [CreatEquipmentsController::class, 'store']);
+        Route::get('/GetAllEquipments' , [CreatEquipmentsController::class, "GetEquipments"]);
+        Route::get('/Activities' , [MaterialsController::class, 'getActivities']);
     }); 
 
     Route::post('/logout', [AuthController::class, 'logout']);
