@@ -12,6 +12,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CreatEquipmentsController;
 use App\Http\Controllers\GetAllBookingsController;
 use App\Http\Controllers\ReserveBookingController;
+use App\Http\Controllers\UpdateStatusController;
 
 // Authentication (Register & Login)
 Route::post('/register', [AuthController::class, 'save']);
@@ -52,6 +53,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/GetAllEquipments' , [CreatEquipmentsController::class, "GetEquipments"]);
         Route::get('/Activities' , [MaterialsController::class, 'getActivities']);
         Route::get('/GetAllBooking' , [GetAllBookingsController::class , 'store']);
+        Route::middleware('auth:sanctum')->patch('/bookings/{id}/status', [UpdateStatusController::class, 'update']);
     }); 
 
     Route::post('/logout', [AuthController::class, 'logout']);

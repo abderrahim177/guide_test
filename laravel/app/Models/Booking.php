@@ -16,6 +16,7 @@ class Booking extends Model
     'end_date',
     'phone',
     'total_price',
+    'status',
 ];
 
     public function client(): BelongsTo

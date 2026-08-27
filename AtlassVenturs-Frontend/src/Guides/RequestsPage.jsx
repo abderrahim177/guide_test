@@ -49,7 +49,7 @@ export default function RequestsPage() {
   const handleConfirm = async (id) => {
     try {
       await axios.patch(
-        `/bookings/${id}/status`,
+        `http://127.0.0.1:8000/api/bookings/${id}/status`,
         { status: "confirmed" },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -64,7 +64,7 @@ export default function RequestsPage() {
   const handleReject = async (id) => {
     try {
       await axios.patch(
-        `/bookings/${id}/status`,
+        `http://127.0.0.1:8000/api/bookings/${id}/status`,
         { status: "rejected" },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -189,22 +189,15 @@ export default function RequestsPage() {
                     </td>
                     <td className="p-3.5">
                       <div className="flex items-center gap-2">
-                        {req.client?.phone && (
+                        {req.phone && (
                           <a
-                            href={`tel:${req.client.phone}`}
+                            href={`tel:${req.phone}`}
                             className="p-1.5 bg-slate-100 text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 rounded-lg transition-colors"
                           >
                             <Phone className="w-3.5 h-3.5" />
                           </a>
                         )}
-                        {req.client?.email && (
-                          <a
-                            href={`mailto:${req.client.email}`}
-                            className="p-1.5 bg-slate-100 text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 rounded-lg transition-colors"
-                          >
-                            <Mail className="w-3.5 h-3.5" />
-                          </a>
-                        )}
+                      
                       </div>
                     </td>
                     <td className="p-3.5">
