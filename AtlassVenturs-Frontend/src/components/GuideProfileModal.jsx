@@ -109,7 +109,7 @@ export default function GuideProfilePage({ guideData }) {
     total_price: totalPrice,
     payment_method: paymentMethod,
     client_name: formadata.name,
-    client_phone: formadata.phone,
+    client_phone: formadata.phone.replace(/\D/g, ''),
   };
 
   try {

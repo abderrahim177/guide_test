@@ -10,6 +10,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MaterialsController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CreatEquipmentsController;
+use App\Http\Controllers\GetAllBookingsController;
 use App\Http\Controllers\ReserveBookingController;
 
 // Authentication (Register & Login)
@@ -50,6 +51,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/create', [CreatEquipmentsController::class, 'store']);
         Route::get('/GetAllEquipments' , [CreatEquipmentsController::class, "GetEquipments"]);
         Route::get('/Activities' , [MaterialsController::class, 'getActivities']);
+        Route::get('/GetAllBooking' , [GetAllBookingsController::class , 'store']);
     }); 
 
     Route::post('/logout', [AuthController::class, 'logout']);

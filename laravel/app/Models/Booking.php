@@ -10,12 +10,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Booking extends Model
 {
     protected $fillable = [
-        'user_id', 
-        'guide_program_id', 
-        'start_date', 
-        'end_date', 
-        'total_price'
-    ];
+    'user_id',
+    'guide_program_id',
+    'start_date',
+    'end_date',
+    'phone',
+    'total_price',
+];
 
     public function client(): BelongsTo
     {
