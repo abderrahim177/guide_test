@@ -39,7 +39,6 @@ export default function GuidesSection() {
   const navigate = useNavigate();
 
   const handleGuideClick = (guide) => {
-    // التوجيه لصفحة المرشد مع تمرير البيانات عبر state
     navigate(`/guides/${guide.id}`, { state: { guideData: guide } });
   };
 
@@ -76,7 +75,6 @@ export default function GuidesSection() {
             key={guide.id}
             className="bg-white rounded-2xl border border-stone-200/90 overflow-hidden shadow-xs flex flex-col justify-between"
           >
-            {/* Image Frame - الكليك هنا كيديك لصفحة المرشد */}
             <div 
               onClick={() => handleGuideClick(guide)}
               className="w-full h-64 bg-stone-100 overflow-hidden cursor-pointer group relative"

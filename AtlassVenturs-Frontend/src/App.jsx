@@ -8,7 +8,7 @@ import LoginPage from './Auth/login';
 import RegisterPage from './Auth/register';
 
 import ProtectedRoute from './components/ProtectedRoute';
-import ClientLayout from './components/ClientLayout'; // <--- Import Layout الجديد
+import ClientLayout from './components/ClientLayout';
 
 import GuideDashboardLayout from './Guides/GuideDashboardLayout';
 import RequestsPage from './Guides/RequestsPage';
@@ -20,7 +20,6 @@ import GuideSettings from './Guides/GuideSettings';
 function App() {
   return (
     <Routes>
-      {/* 1. Auth Routes (بلا Navbar / Footer) */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
 
@@ -42,7 +41,6 @@ function App() {
         </Route>
       </Route>
 
-      {/* 4. Catch-all Fallback */}
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );

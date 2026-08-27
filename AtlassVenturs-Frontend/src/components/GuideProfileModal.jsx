@@ -12,8 +12,8 @@ import {
   CreditCard,
   PackageCheck,
   ChevronDown,
-  X,
 } from "lucide-react";
+import axios from "axios";
 
 export default function GuideProfilePage({ guideData }) {
   const guide = guideData || {
@@ -40,6 +40,11 @@ export default function GuideProfilePage({ guideData }) {
   const [step, setStep] = useState("checkout"); // 'checkout' | 'confirmed'
   const [paymentMethod, setPaymentMethod] = useState("deposit"); // 'deposit' | 'whatsapp'
   const [userNeedsGear, setUserNeedsGear] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [formadata, setFormadata] = useState({
+    name: "",
+    phone: "",
+  });
 
   const cardRef = useRef(null);
 
@@ -71,6 +76,14 @@ export default function GuideProfilePage({ guideData }) {
     }
   };
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormadata((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   const handleToggleCheckout = () => {
     if (!isCheckoutOpen) {
       setUserNeedsGear(includeGear);
@@ -83,14 +96,43 @@ export default function GuideProfilePage({ guideData }) {
     }
   };
 
-  const handleBookingSubmit = (e) => {
-    e.preventDefault();
-    setStep("confirmed");
+ const handleBookingSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  const token = localStorage.getItem("token");
+
+  const payload = {
+   guide_program_id: guide.program_id || guide.id,
+    start_date: startDate,
+    end_date: endDate,
+    include_gear: currentGearStatus,
+    total_price: totalPrice,
+    payment_method: paymentMethod,
+    client_name: formadata.name,
+    client_phone: formadata.phone,
   };
+
+  try {
+    await axios.post("http://127.0.0.1:8000/api/bookings", payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/json",
+      },
+    });
+    setStep("confirmed");
+  } catch (err) {
+    if (err.response && err.response.status === 422) {
+    console.log("Validation Errors:", err.response.data.errors);
+  } else {
+    console.error("Booking failed:", err);
+  }
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-stone-50/50 text-stone-800 font-['Poppins',sans-serif] pb-16">
-      
       {/* 1. HEADER SECTION */}
       <div className="bg-white border-b border-stone-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -143,11 +185,10 @@ export default function GuideProfilePage({ guideData }) {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        
         {/* 2. UNIFIED PAPER CARD WITH SAME LIGHT GREEN BACKGROUND */}
-        <section 
-          ref={cardRef} 
-          className="max-w-4xl mx-auto bg-emerald-50/70 rounded-3xl border-2 border-emerald-500/30 shadow-md overflow-hidden transition-all duration-300"
+        <section
+          ref={cardRef}
+          className="w-full mx-auto bg-emerald-50/70 rounded-3xl border-2 border-emerald-500/30 shadow-md overflow-hidden transition-all duration-300"
         >
           {/* TOP HALF: MAIN BAR */}
           <div className="p-6 sm:p-8 space-y-6">
@@ -167,7 +208,6 @@ export default function GuideProfilePage({ guideData }) {
 
             {/* Inputs Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              
               {/* Start Date */}
               <div className="space-y-1.5 bg-white p-3.5 rounded-2xl border border-emerald-200/80 shadow-xs hover:border-emerald-500 transition-colors">
                 <label className="text-xs font-bold text-stone-800 flex items-center gap-1.5">
@@ -219,7 +259,6 @@ export default function GuideProfilePage({ guideData }) {
                   className="mt-0.5 h-5 w-5 rounded border-stone-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer shrink-0"
                 />
               </div>
-
             </div>
 
             {/* Summary & Action Button */}
@@ -247,7 +286,7 @@ export default function GuideProfilePage({ guideData }) {
             </div>
           </div>
 
-          {/* BOTTOM HALF: EXPANDABLE ACCORDION (UNFOLD WITH MATCHING BACKGROUND) */}
+          {/* BOTTOM HALF: EXPANDABLE ACCORDION */}
           <div
             className={`grid transition-all duration-500 ease-in-out origin-top border-t border-emerald-300/60 ${
               isCheckoutOpen
@@ -256,7 +295,6 @@ export default function GuideProfilePage({ guideData }) {
             }`}
           >
             <div className="overflow-hidden">
-              {/* Top Section Sub-Header (Integrated Color) */}
               <div className="bg-emerald-100/80 border-b border-emerald-200/80 px-6 sm:px-8 py-3.5 flex items-center justify-between">
                 <div>
                   <span className="text-[10px] font-bold tracking-wider text-emerald-800 uppercase block">
@@ -268,11 +306,9 @@ export default function GuideProfilePage({ guideData }) {
                 </div>
               </div>
 
-              {/* Accordion Inner Content */}
               <div className="p-6 sm:p-8 space-y-6">
                 {step === 'checkout' ? (
                   <div className="space-y-6">
-                    {/* Live Summary Bar */}
                     <div className="bg-white p-4 rounded-2xl border border-emerald-200/80 text-xs grid grid-cols-1 sm:grid-cols-3 gap-4 shadow-2xs">
                       <div>
                         <span className="text-stone-500 block font-medium">Dates & Duration:</span>
@@ -290,14 +326,16 @@ export default function GuideProfilePage({ guideData }) {
                       </div>
                     </div>
 
-                    {/* Booking Form */}
                     <form onSubmit={handleBookingSubmit} className="space-y-5 text-xs">
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                           <label className="block font-bold text-stone-700 mb-1.5">Full Name</label>
                           <input
-                            required
+                            name="name"
+                            value={formadata.name}
+                            onChange={handleInputChange}
                             type="text"
+                            required
                             placeholder="e.g. Yassine El Amrani"
                             className="w-full p-3 bg-white border border-emerald-200/90 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
                           />
@@ -305,19 +343,20 @@ export default function GuideProfilePage({ guideData }) {
                         <div>
                           <label className="block font-bold text-stone-700 mb-1.5">Phone / WhatsApp</label>
                           <input
-                            required
+                            name="phone"
+                            value={formadata.phone}
+                            onChange={handleInputChange}
                             type="tel"
+                            required
                             placeholder="+212 600 000 000"
                             className="w-full p-3 bg-white border border-emerald-200/90 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
                           />
                         </div>
                       </div>
 
-                      {/* Payment Options Selection */}
                       <div className="space-y-3 pt-2">
                         <label className="block font-bold text-stone-800">Payment Preference:</label>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          
                           <div
                             onClick={() => setPaymentMethod('deposit')}
                             className={`p-4 rounded-2xl border cursor-pointer flex items-center justify-between transition-all ${
@@ -341,7 +380,7 @@ export default function GuideProfilePage({ guideData }) {
                               type="radio"
                               name="payment"
                               checked={paymentMethod === 'deposit'}
-                              readOnly
+                              onChange={() => setPaymentMethod('deposit')}
                               className="accent-emerald-600 cursor-pointer"
                             />
                           </div>
@@ -369,15 +408,13 @@ export default function GuideProfilePage({ guideData }) {
                               type="radio"
                               name="payment"
                               checked={paymentMethod === 'whatsapp'}
-                              readOnly
+                              onChange={() => setPaymentMethod('whatsapp')}
                               className="accent-emerald-600 cursor-pointer"
                             />
                           </div>
-
                         </div>
                       </div>
 
-                      {/* Action Buttons */}
                       <div className="flex gap-3 pt-3">
                         <button
                           type="button"
@@ -388,15 +425,15 @@ export default function GuideProfilePage({ guideData }) {
                         </button>
                         <button
                           type="submit"
-                          className="w-2/3 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold transition-all shadow-md active:scale-98 cursor-pointer"
+                          disabled={loading}
+                          className="w-2/3 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold transition-all shadow-md active:scale-98 cursor-pointer disabled:opacity-50"
                         >
-                          Submit Reservation Request
+                          {loading ? "Submitting..." : "Submit Reservation Request"}
                         </button>
                       </div>
                     </form>
                   </div>
                 ) : (
-                  /* Step 2: Confirmation Screen */
                   <div className="space-y-6 text-center">
                     <div className="space-y-2 pt-2">
                       <CheckCircle2 className="w-14 h-14 text-emerald-600 mx-auto animate-bounce" />
@@ -554,7 +591,6 @@ export default function GuideProfilePage({ guideData }) {
             </div>
           </div>
         </div>
-
       </div>
     </div>
   );
