@@ -25,4 +25,21 @@ class UpdateStatusController extends Controller
             'data'    => $booking
         ], 200);
     }
+    public function refuser(Request $request, $id)
+    {
+        $refused = $request->validate([
+            'status' => 'required|string|in:rejected,cancelled',
+        ]);
+
+        $refuseBooking = Booking::findOrFail($id);
+
+        $refuseBooking->update([
+            'status' => $refused['status'],
+        ]);
+
+        return response()->json([
+            'message' => 'Booking status rejected successfully',
+            'data'    => $refuseBooking
+        ], 200);
+    }
 }

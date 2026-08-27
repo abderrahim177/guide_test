@@ -54,7 +54,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/Activities' , [MaterialsController::class, 'getActivities']);
         Route::get('/GetAllBooking' , [GetAllBookingsController::class , 'store']);
         Route::middleware('auth:sanctum')->patch('/bookings/{id}/status', [UpdateStatusController::class, 'update']);
-    }); 
+        Route::patch('/bookingsRefuse/{id}/status', [UpdateStatusController::class, 'refuser']);    }); 
 
     Route::post('/logout', [AuthController::class, 'logout']);
 });

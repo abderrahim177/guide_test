@@ -64,17 +64,18 @@ export default function RequestsPage() {
   const handleReject = async (id) => {
     try {
       await axios.patch(
-        `http://127.0.0.1:8000/api/bookings/${id}/status`,
+        `http://127.0.0.1:8000/api/bookingsRefuse/${id}/status`,
         { status: "rejected" },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+
       setRequests((prev) =>
         prev.map((req) => (req.id === id ? { ...req, status: "rejected" } : req))
       );
     } catch (err) {
       console.error("Failed to reject booking", err);
     }
-  };
+};
 
   return (
     <div className="space-y-6">
