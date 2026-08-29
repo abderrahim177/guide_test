@@ -18,7 +18,7 @@ const handelFetchdata = async (e) => {
   }
   setloading(true);
   try {
-    const response = await axios.get('/GetAllBooking', {
+    const response = await axios.get('/ConfirmedBooking', {
       headers: {
         Authorization: `Bearer ${token}`, 
         Accept: 'application/json',

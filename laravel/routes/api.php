@@ -9,6 +9,7 @@ use App\Http\Controllers\GetaileController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MaterialsController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\ConfirmedBookingsController;
 use App\Http\Controllers\CreatEquipmentsController;
 use App\Http\Controllers\GetAllBookingsController;
 use App\Http\Controllers\ReserveBookingController;
@@ -54,7 +55,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/Activities' , [MaterialsController::class, 'getActivities']);
         Route::get('/GetAllBooking' , [GetAllBookingsController::class , 'store']);
         Route::middleware('auth:sanctum')->patch('/bookings/{id}/status', [UpdateStatusController::class, 'update']);
-        Route::patch('/bookingsRefuse/{id}/status', [UpdateStatusController::class, 'refuser']);    }); 
+        Route::patch('/bookingsRefuse/{id}/status', [UpdateStatusController::class, 'refuser']);
+        Route::get('/ConfirmedBooking' , [ConfirmedBookingsController::class , 'ConfirmedBooking']);    
+        }); 
 
     Route::post('/logout', [AuthController::class, 'logout']);
 });

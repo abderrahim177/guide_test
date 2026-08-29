@@ -16,7 +16,7 @@ import ConfirmedBookings from './Guides/ConfirmedBookings';
 import EquipmentRent from './Guides/EquipmentRent';
 import GuideCalendar from './Guides/GuideCalendar';
 import GuideSettings from './Guides/GuideSettings';
-
+import PlatformTrustSection from './components/PlatformTrustSection';
 function App() {
   return (
     <Routes>
@@ -25,7 +25,7 @@ function App() {
 
       <Route element={<ProtectedRoute allowedRoles={[3]} />}>
         <Route element={<ClientLayout />}>
-          <Route path="/" element={<><HeroSection /><GuideSection /></>} />
+          <Route path="/" element={<><HeroSection /><GuideSection /><PlatformTrustSection/></>} />
           <Route path="/guides/:id" element={<GuideProfilePage />} />
         </Route>
       </Route>
