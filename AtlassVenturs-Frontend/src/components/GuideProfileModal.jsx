@@ -38,8 +38,8 @@ export default function GuideProfilePage({ guideData }) {
 
   // Interactive UI States
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
-  const [step, setStep] = useState("checkout"); // 'checkout' | 'confirmed'
-  const [paymentMethod, setPaymentMethod] = useState("deposit"); // 'deposit' | 'whatsapp'
+  const [step, setStep] = useState("checkout");
+  const [paymentMethod, setPaymentMethod] = useState("deposit"); 
   const [userNeedsGear, setUserNeedsGear] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formadata, setFormadata] = useState({
@@ -48,7 +48,7 @@ export default function GuideProfilePage({ guideData }) {
   });
 
   // Feature: Booking Status Check
-  const [bookingStatus, setBookingStatus] = useState(null); // 'pending' | 'confirmed' | 'rejected'
+  const [bookingStatus, setBookingStatus] = useState(null); 
   const [isGearOpen, setIsGearOpen] = useState(false);
 
   const cardRef = useRef(null);

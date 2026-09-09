@@ -35,9 +35,9 @@ const navigate = useNavigate();
     if (response.data.access_token) {
       const user = response.data.user;
 
-  localStorage.setItem('token', response.data.access_token);
-  localStorage.setItem('user', JSON.stringify(user));
-        
+    localStorage.setItem('token', response.data.access_token);
+    localStorage.setItem('user', JSON.stringify(user));
+
   if (user.role_id === 2) {
     navigate('/guide/requests');
   } else {

@@ -1,3 +1,4 @@
+
 import { Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
 
@@ -17,7 +18,10 @@ import EquipmentRent from './Guides/EquipmentRent';
 import GuideCalendar from './Guides/GuideCalendar';
 import GuideSettings from './Guides/GuideSettings';
 import PlatformTrustSection from './components/PlatformTrustSection';
+
 function App() {
+  const token = localStorage.getItem('token');
+  
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
@@ -25,7 +29,13 @@ function App() {
 
       <Route element={<ProtectedRoute allowedRoles={[3]} />}>
         <Route element={<ClientLayout />}>
-          <Route path="/" element={<><HeroSection /><GuideSection /><PlatformTrustSection/></>} />
+          <Route path="/" element={
+            <>
+              <HeroSection />
+              <GuideSection />
+              <PlatformTrustSection />
+            </>
+          } />
           <Route path="/guides/:id" element={<GuideProfilePage />} />
         </Route>
       </Route>
