@@ -18,7 +18,7 @@ const handelFetchdata = async (e) => {
   }
   setloading(true);
   try {
-    const response = await axios.get('/ConfirmedBooking', {
+    const response = await axios.get('http://127.0.0.1:8000/api/ConfirmedBooking', {
       headers: {
         Authorization: `Bearer ${token}`, 
         Accept: 'application/json',
@@ -48,28 +48,29 @@ useEffect(() => {
     {error && <p>Error loading bookings</p>}
     
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {confirmedList.map((item) => (
+        {data.map((item) => (
           <div key={item.id} className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm space-y-3">
             <div className="flex justify-between items-start">
               <div>
                 <span className="text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full font-bold uppercase">Confirmed</span>
-                <h3 className="font-bold text-slate-900 text-sm mt-1">{item.client}</h3>
+                <h3 className="font-bold text-slate-900 text-sm mt-1">{item.client.name}</h3>
               </div>
-              <span className="font-bold text-emerald-800 text-sm">{item.price}</span>
+              <span className="font-bold text-emerald-800 text-sm">{item.total_price}</span>
             </div>
             
             <div className="space-y-1 text-slate-600 text-xs">
               <div className="flex items-center gap-2">
                 <MapPin className="w-3.5 h-3.5 text-slate-400" />
-                <span>{item.place}</span>
+                <span>{item.place } {'Region Azilal'}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                <span>{item.date}</span>
+                <span>{item.start_date}</span>-
+                <span>{item.end_date}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Users className="w-3.5 h-3.5 text-slate-400" />
-                <span>{item.group} Hikers</span>
+                <span>{item.group} {'1'} Hikers </span>
               </div>
             </div>
           </div>

@@ -14,6 +14,7 @@ use App\Http\Controllers\CreatEquipmentsController;
 use App\Http\Controllers\GetAllBookingsController;
 use App\Http\Controllers\ReserveBookingController;
 use App\Http\Controllers\UpdateStatusController;
+use App\Http\Controllers\getGuideBookingsController;
 
 // Authentication (Register & Login)
 Route::post('/register', [AuthController::class, 'save']);
@@ -56,7 +57,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/GetAllBooking' , [GetAllBookingsController::class , 'store']);
         Route::middleware('auth:sanctum')->patch('/bookings/{id}/status', [UpdateStatusController::class, 'update']);
         Route::patch('/bookingsRefuse/{id}/status', [UpdateStatusController::class, 'refuser']);
-        Route::get('/ConfirmedBooking' , [ConfirmedBookingsController::class , 'ConfirmedBooking']);    
+        Route::get('/ConfirmedBooking' , [ConfirmedBookingsController::class , 'ConfirmedBooking']);  
+        Route::get('/getGuideBookings' , [getGuideBookingsController::class , 'getGuideBookings']);  
         }); 
 
     Route::post('/logout', [AuthController::class, 'logout']);

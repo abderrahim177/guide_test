@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class ConfirmedBookingsController extends Controller
 {
     public function ConfirmedBooking(){
-        $BookingConfirmed = Booking::where("status" , "confirmed")->get();
+        $BookingConfirmed = Booking::with('client')->where("status" , "confirmed")->get();
         return response()->json($BookingConfirmed ,200);
     }
     }

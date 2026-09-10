@@ -161,7 +161,7 @@ export default function GuideProfilePage({ guideData }) {
       setLoading(false);
     }
   };
-
+  
   return (
     <div className="min-h-screen bg-stone-50/50 text-stone-800 font-['Poppins',sans-serif] pb-16">
       {/* 1. HEADER SECTION */}
@@ -426,6 +426,7 @@ export default function GuideProfilePage({ guideData }) {
                             className="w-full p-3 bg-white border border-emerald-200/90 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
                           />
                         </div>
+
                       </div>
 
                       <div className="space-y-3 pt-2">
