@@ -16,6 +16,6 @@ class getGuideBookingsController extends Controller
     ->select('id', 'user_id', 'start_date', 'end_date', 'status', 'total_price', 'phone')
     ->get();
 
-    return response()->json($bookings);
+    return response()->json($bookings , 200);
 }
 }

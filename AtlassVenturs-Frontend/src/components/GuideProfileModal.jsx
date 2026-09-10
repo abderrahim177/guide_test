@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   MapPin,
   Languages,
@@ -30,7 +31,7 @@ export default function GuideProfilePage({ guideData }) {
   };
 
   const todayStr = new Date().toISOString().split("T")[0];
-
+  const navigate = useNavigate();
   // Booking Form States
   const [startDate, setStartDate] = useState(todayStr);
   const [endDate, setEndDate] = useState(todayStr);
@@ -66,7 +67,6 @@ export default function GuideProfilePage({ guideData }) {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-        // Assuming API returns { status: 'confirmed' }
         if (response.data && response.data.status) {
           setBookingStatus(response.data.status);
         }
@@ -308,16 +308,7 @@ export default function GuideProfilePage({ guideData }) {
 
               {/* Action Buttons Group */}
               <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
-                <button
-                  type="button"
-                  onClick={handleToggleCheckout}
-                  className="w-full sm:w-auto px-8 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition-all shadow-md active:scale-95 cursor-pointer flex items-center justify-center gap-2"
-                >
-                  <span>{isCheckoutOpen ? "Hide Details" : "Book Trek Now"}</span>
-                  <ChevronDown className={`w-4 h-4 transition-transform duration-500 ease-in-out ${isCheckoutOpen ? "rotate-180" : ""}`} />
-                </button>
-
-                {/* Hidden Button: Appears only when guide confirms the booking */}
+                {/* View Required Gear Button (Appears ONLY to the left of Book Trek Now when status is confirmed) */}
                 {bookingStatus === "confirmed" && (
                   <button
                     type="button"
@@ -328,6 +319,15 @@ export default function GuideProfilePage({ guideData }) {
                     <span>{isGearOpen ? "Hide Required Gear" : "View Required Gear"}</span>
                   </button>
                 )}
+
+                <button
+                  type="button"
+                  onClick={handleToggleCheckout}
+                  className="w-full sm:w-auto px-8 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition-all shadow-md active:scale-95 cursor-pointer flex items-center justify-center gap-2"
+                >
+                  <span>{isCheckoutOpen ? "Hide Details" : "Book Trek Now"}</span>
+                  <ChevronDown className={`w-4 h-4 transition-transform duration-500 ease-in-out ${isCheckoutOpen ? "rotate-180" : ""}`} />
+                </button>
               </div>
             </div>
 
@@ -578,6 +578,12 @@ export default function GuideProfilePage({ guideData }) {
                       className="w-full py-3 bg-white hover:bg-emerald-100/50 text-stone-800 border border-emerald-200/80 rounded-xl text-xs font-bold transition-colors cursor-pointer"
                     >
                       Done & Close
+                    </button>
+                    <button 
+                    type="button"
+                    onClick={() => navigate('/Required-Gear')}
+                    className="w-full py-3 bg-green-400 hover:bg-green-300 text-stone-800 border border-emerald-200/80 rounded-xl text-xs font-bold transition-colors cursor-pointer">
+                        View Required Gear
                     </button>
                   </div>
                 )}

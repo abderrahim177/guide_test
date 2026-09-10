@@ -1,4 +1,3 @@
-
 import { Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
 
@@ -18,26 +17,23 @@ import EquipmentRent from './Guides/EquipmentRent';
 import GuideCalendar from './Guides/GuideCalendar';
 import GuideSettings from './Guides/GuideSettings';
 import PlatformTrustSection from './components/PlatformTrustSection';
-
+import Panier from './components/Panier'
 function App() {
-  const token = localStorage.getItem('token');
-  
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
 
-      <Route element={<ProtectedRoute allowedRoles={[3]} />}>
-        <Route element={<ClientLayout />}>
-          <Route path="/" element={
-            <>
-              <HeroSection />
-              <GuideSection />
-              <PlatformTrustSection />
-            </>
-          } />
-          <Route path="/guides/:id" element={<GuideProfilePage />} />
-        </Route>
+      <Route element={<ClientLayout />}>
+        <Route path="/" element={
+          <>
+            <HeroSection />
+            <GuideSection />
+            <PlatformTrustSection />
+          </>
+        } />
+        <Route path="/guides/:id" element={<GuideProfilePage />} />
+        <Route path="/Required-Gear" element={<Panier />} />
       </Route>
 
       <Route element={<ProtectedRoute allowedRoles={[2]} />}>
@@ -51,7 +47,7 @@ function App() {
         </Route>
       </Route>
 
-      <Route path="*" element={<Navigate to="/login" replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }
