@@ -1,13 +1,23 @@
 import React, { useState } from "react";
 import { Backpack, Shield, Tent, Compass, Flame, SunMedium, Droplets, Trash2, Plus, Minus, Check, ArrowRight, ShoppingCart } from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function EquipmentRentalPanier() {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const guideData = location.state?.guideData || {};
+  const bookingDetails = location.state?.bookingDetails || {};
+
+  const guideServicePrice = Number(bookingDetails.totalPrice) ;
+  
+  const gearPricePerDay = Number(guideData.gearPrice) || 150;
+
   const [items, setItems] = useState([
     {
       id: 1,
       name: "3-Season High Atlas Tent",
       category: "Camping",
-      pricePerDay: 70,
       quantity: 1,
       icon: <Tent className="w-5 h-5 text-emerald-600" />,
     },
@@ -15,7 +25,6 @@ export default function EquipmentRentalPanier() {
       id: 2,
       name: "Sleeping Bag (-5°C Comfort)",
       category: "Sleeping",
-      pricePerDay: 50,
       quantity: 1,
       icon: <Backpack className="w-5 h-5 text-emerald-600" />,
     },
@@ -23,7 +32,6 @@ export default function EquipmentRentalPanier() {
       id: 3,
       name: "Telescopic Trekking Poles",
       category: "Trekking",
-      pricePerDay: 30,
       quantity: 2,
       icon: <Compass className="w-5 h-5 text-emerald-600" />,
     },
@@ -31,7 +39,6 @@ export default function EquipmentRentalPanier() {
       id: 4,
       name: "Portable Camping Stove + Gas",
       category: "Cooking",
-      pricePerDay: 40,
       quantity: 0,
       icon: <Flame className="w-5 h-5 text-emerald-600" />,
     },
@@ -39,7 +46,6 @@ export default function EquipmentRentalPanier() {
       id: 5,
       name: "LED Headlamp (Rechargeable)",
       category: "Lighting",
-      pricePerDay: 20,
       quantity: 0,
       icon: <SunMedium className="w-5 h-5 text-emerald-600" />,
     },
@@ -47,13 +53,12 @@ export default function EquipmentRentalPanier() {
       id: 6,
       name: "Thermal Water Flask (1.5L)",
       category: "Hydration",
-      pricePerDay: 15,
       quantity: 0,
       icon: <Droplets className="w-5 h-5 text-emerald-600" />,
     },
   ]);
 
-  const [rentalDays, setRentalDays] = useState(3);
+  const [rentalDays, setRentalDays] = useState(bookingDetails.startDate && bookingDetails.endDate ? 3 : 3);
   const [insuranceSelected, setInsuranceSelected] = useState(true);
 
   const updateQuantity = (id, delta) => {
@@ -68,9 +73,25 @@ export default function EquipmentRentalPanier() {
 
   const cartItems = items.filter(item => item.quantity > 0);
 
-  const subtotal = cartItems.reduce((acc, item) => acc + (item.pricePerDay * item.quantity * rentalDays), 0);
-  const insuranceFee = insuranceSelected ? 25 * rentalDays : 0;
-  const totalAmount = subtotal + insuranceFee;
+  const gearSubtotal = cartItems.length > 0 ? gearPricePerDay * rentalDays : 0;
+  const insuranceFee = insuranceSelected && cartItems.length > 0 ? 25 * rentalDays : 0;
+  
+  const totalAmount = guideServicePrice + gearSubtotal + insuranceFee;
+
+  const handleProceedToCheckout = () => {
+    navigate("/checkout", {
+      state: {
+        guideData: guideData,
+        bookingDetails: {
+          ...bookingDetails,
+          totalPrice: totalAmount, 
+          rentalDays: rentalDays,
+          gearSubtotal: gearSubtotal,
+          insuranceFee: insuranceFee,
+        }
+      }
+    });
+  };
 
   return (
     <div className="max-w-6xl mx-auto p-4 sm:p-6 font-['Poppins',sans-serif] text-stone-800">
@@ -108,7 +129,7 @@ export default function EquipmentRentalPanier() {
         
         <div className="lg:col-span-2 space-y-4">
           <h3 className="text-sm font-bold text-stone-700 uppercase tracking-wide mb-2">
-            Available Equipment Catalogue
+            Available Equipment Catalogue (Guide Rate: {gearPricePerDay} MAD/day)
           </h3>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -132,7 +153,7 @@ export default function EquipmentRentalPanier() {
                     {item.name}
                   </h4>
                   <span className="text-xs text-stone-500 font-medium">
-                    {item.pricePerDay} MAD / day
+                    Included in Gear Pack
                   </span>
                 </div>
 
@@ -197,7 +218,7 @@ export default function EquipmentRentalPanier() {
                 <div key={item.id} className="flex items-center justify-between bg-white p-2.5 rounded-xl border border-emerald-100 text-xs">
                   <div>
                     <span className="font-bold text-stone-900 block">{item.name}</span>
-                    <span className="text-[10px] text-stone-500">{item.quantity}x • {item.pricePerDay * item.quantity * rentalDays} MAD</span>
+                    <span className="text-[10px] text-stone-500">Qty: {item.quantity}</span>
                   </div>
                   <button 
                     onClick={() => updateQuantity(item.id, -item.quantity)}
@@ -212,8 +233,12 @@ export default function EquipmentRentalPanier() {
 
           <div className="space-y-2 text-xs pt-3 border-t border-emerald-200/80 font-medium text-stone-600">
             <div className="flex justify-between">
-              <span>Subtotal ({rentalDays} {rentalDays === 1 ? 'Day' : 'Days'}):</span>
-              <span className="font-bold text-stone-900">{subtotal} MAD</span>
+              <span>Guide Service Fee:</span>
+              <span className="font-bold text-stone-900">{guideServicePrice} MAD</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Equipment Rental ({rentalDays} Days):</span>
+              <span className="font-bold text-stone-900">{gearSubtotal} MAD</span>
             </div>
             <div className="flex justify-between">
               <span>Protection Fee:</span>
@@ -227,6 +252,7 @@ export default function EquipmentRentalPanier() {
           </div>
 
           <button 
+            onClick={handleProceedToCheckout}
             disabled={cartItems.length === 0}
             className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold py-3.5 px-4 rounded-2xl text-xs transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-98"
           >

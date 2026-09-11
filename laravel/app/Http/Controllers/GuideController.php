@@ -10,20 +10,17 @@ use App\Models\Activity;
 class GuideController extends Controller
 {
     public function getGuides()
-    {
-        // 1. Djib les programs d les guides m'a l-relations
-        $guides = GuideProgram::with(['guide', 'region', 'activity'])->get();
+{
+    $guides = GuideProgram::with([
+        'guide', 
+        'region', 
+        'activity'
+    ])->get(); 
+    
+    return response()->json([
+        'status'    => 'success',
+        'guides'    => $guides,
+    ], 200);
+}
 
-        // 2. Djib les regions o les activities d l-filtrage
-        $locations = Region::all(); 
-        $places = Activity::all(); 
-        
-        // 3. Rje' les données b JSON l React
-        return response()->json([
-            'status'    => 'success',
-            'guides'    => $guides,
-            'locations' => $locations,
-            'places'    => $places
-        ], 200);
-    }
 }
