@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Backpack, Shield, Tent, Compass, Flame, SunMedium, Droplets, Trash2, Plus, Minus, Check, ArrowRight, ShoppingCart } from "lucide-react";
 
 export default function EquipmentRentalPanier() {
-  // قائمة المعدات المتاحة للكراء
   const [items, setItems] = useState([
     {
       id: 1,
@@ -57,7 +56,6 @@ export default function EquipmentRentalPanier() {
   const [rentalDays, setRentalDays] = useState(3);
   const [insuranceSelected, setInsuranceSelected] = useState(true);
 
-  // تحديث الكمية (إضافة أو نقصان)
   const updateQuantity = (id, delta) => {
     setItems(items.map(item => {
       if (item.id === id) {
@@ -68,10 +66,8 @@ export default function EquipmentRentalPanier() {
     }));
   };
 
-  // تصفية المعدات لي مختارهم الكلاينت فقط باش يبانو في السلة
   const cartItems = items.filter(item => item.quantity > 0);
 
-  // الحسابات المالية
   const subtotal = cartItems.reduce((acc, item) => acc + (item.pricePerDay * item.quantity * rentalDays), 0);
   const insuranceFee = insuranceSelected ? 25 * rentalDays : 0;
   const totalAmount = subtotal + insuranceFee;
@@ -79,7 +75,6 @@ export default function EquipmentRentalPanier() {
   return (
     <div className="max-w-6xl mx-auto p-4 sm:p-6 font-['Poppins',sans-serif] text-stone-800">
       
-      {/* العنوان الرئيسي */}
       <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-stone-200 pb-4">
         <div>
           <span className="bg-emerald-100 text-emerald-800 text-[11px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
@@ -109,10 +104,8 @@ export default function EquipmentRentalPanier() {
         </div>
       </div>
 
-      {/* المحتوى مقسم لـ 2 أقسام: كالوج المعدات (يسار) وملخص السلة (يمين) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        {/* قائمة المعدات المتوفرة (2 أعمدة) */}
         <div className="lg:col-span-2 space-y-4">
           <h3 className="text-sm font-bold text-stone-700 uppercase tracking-wide mb-2">
             Available Equipment Catalogue
@@ -165,7 +158,6 @@ export default function EquipmentRentalPanier() {
             ))}
           </div>
 
-          {/* خيار التأمين */}
           <div 
             onClick={() => setInsuranceSelected(!insuranceSelected)}
             className={`p-4 rounded-2xl border cursor-pointer flex items-center justify-between transition-all mt-4 ${
@@ -187,7 +179,6 @@ export default function EquipmentRentalPanier() {
           </div>
         </div>
 
-        {/* ملخص السلة (العمود الأيمن) */}
         <div className="bg-emerald-50/70 border-2 border-emerald-500/30 rounded-3xl p-6 space-y-5 h-fit shadow-md">
           <div className="flex items-center gap-2 border-b border-emerald-200 pb-3">
             <ShoppingCart className="w-5 h-5 text-emerald-700" />
@@ -196,7 +187,6 @@ export default function EquipmentRentalPanier() {
             </h3>
           </div>
 
-          {/* قائمة المنتجات المختارة في السلة */}
           <div className="space-y-3 max-h-60 overflow-y-auto pr-1">
             {cartItems.length === 0 ? (
               <p className="text-xs text-stone-500 text-center py-6 font-medium">

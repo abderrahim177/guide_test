@@ -47,37 +47,7 @@ export default function GuideProfilePage({ guideData }) {
     name: "",
     phone: "",
   });
-
-  // Feature: Booking Status Check
-  const [bookingStatus, setBookingStatus] = useState(null); 
-  const [isGearOpen, setIsGearOpen] = useState(false);
-
   const cardRef = useRef(null);
-
-  // Fetching status from Laravel API for this guide/user
-  useEffect(() => {
-    const fetchBookingStatus = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) return;
-
-      try {
-        const response = await axios.get(
-          `http://127.0.0.1:8000/api/user/bookings/status?guide_id=${guide.id}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        if (response.data && response.data.status) {
-          setBookingStatus(response.data.status);
-        }
-      } catch (err) {
-        console.error("Failed to fetch booking status", err);
-      }
-    };
-
-    fetchBookingStatus();
-  }, [guide.id]);
-
   // Calculations
   const calculateDays = () => {
     if (!startDate || !endDate) return 1;
@@ -130,18 +100,14 @@ export default function GuideProfilePage({ guideData }) {
     e.preventDefault();
     setLoading(true);
     const token = localStorage.getItem("token");
-
     const payload = {
       guide_program_id: guide.program_id || guide.id,
       start_date: startDate,
       end_date: endDate,
-      include_gear: currentGearStatus,
       total_price: totalPrice,
-      payment_method: paymentMethod,
       client_name: formadata.name,
       client_phone: formadata.phone.replace(/\D/g, ""),
     };
-
     try {
       await axios.post("http://127.0.0.1:8000/api/bookings", payload, {
         headers: {
@@ -308,18 +274,6 @@ export default function GuideProfilePage({ guideData }) {
 
               {/* Action Buttons Group */}
               <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
-                {/* View Required Gear Button (Appears ONLY to the left of Book Trek Now when status is confirmed) */}
-                {bookingStatus === "confirmed" && (
-                  <button
-                    type="button"
-                    onClick={() => setIsGearOpen((prev) => !prev)}
-                    className="w-full sm:w-auto px-6 py-3.5 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs rounded-xl transition-all shadow-md active:scale-95 cursor-pointer flex items-center justify-center gap-2"
-                  >
-                    <Backpack className="w-4 h-4" />
-                    <span>{isGearOpen ? "Hide Required Gear" : "View Required Gear"}</span>
-                  </button>
-                )}
-
                 <button
                   type="button"
                   onClick={handleToggleCheckout}
@@ -330,34 +284,6 @@ export default function GuideProfilePage({ guideData }) {
                 </button>
               </div>
             </div>
-
-            {/* Expandable Gear Details List */}
-            {bookingStatus === "confirmed" && isGearOpen && (
-              <div className="p-5 bg-white border border-amber-300 rounded-2xl shadow-xs space-y-3">
-                <h4 className="font-bold text-stone-900 text-sm flex items-center gap-2">
-                  <Backpack className="w-4 h-4 text-amber-600" />
-                  Required Gear for this Confirmed Activity:
-                </h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-stone-600">
-                  <div className="space-y-1">
-                    <span className="font-semibold text-stone-800 block">Personal Clothing:</span>
-                    <ul className="list-disc list-inside space-y-1">
-                      <li>Waterproof & Windproof Jacket</li>
-                      <li>High-cut Trekking Boots</li>
-                      <li>Thermal Layers & Fleece</li>
-                    </ul>
-                  </div>
-                  <div className="space-y-1">
-                    <span className="font-semibold text-stone-800 block">Technical Equipment:</span>
-                    <ul className="list-disc list-inside space-y-1">
-                      <li>Trekking Poles (Bâtons de marche)</li>
-                      <li>Sleeping Bag (-5°C Rated)</li>
-                      <li>Headlamp with Extra Batteries</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
 
           {/* BOTTOM HALF: EXPANDABLE ACCORDION */}
@@ -579,12 +505,24 @@ export default function GuideProfilePage({ guideData }) {
                     >
                       Done & Close
                     </button>
+                  {userNeedsGear && (
                     <button 
                     type="button"
                     onClick={() => navigate('/Required-Gear')}
                     className="w-full py-3 bg-green-400 hover:bg-green-300 text-stone-800 border border-emerald-200/80 rounded-xl text-xs font-bold transition-colors cursor-pointer">
                         View Required Gear
                     </button>
+                    )} 
+                    {!userNeedsGear && (
+                      <button 
+                    type="button"
+                    onClick={() => navigate('/Payment')}
+                    className="w-full py-3 bg-green-400 hover:bg-green-300 text-stone-800 border border-emerald-200/80 rounded-xl text-xs font-bold transition-colors cursor-pointer">
+                        get payment
+                    </button>
+                    )}
+                    
+                    
                   </div>
                 )}
               </div>

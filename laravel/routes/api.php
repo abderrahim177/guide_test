@@ -35,6 +35,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware(\App\Http\Middleware\RoleMiddleware::class . ':3')->group(function () {
         Route::post('/cart/add', [CartController::class, 'addToBasket']);
         Route::post('/bookings' , [ReserveBookingController::class , 'store']);
+        Route::get('/profile' , [AuthController::class , 'me']);
     }); 
 
     // Admin / Provider (Role 2)

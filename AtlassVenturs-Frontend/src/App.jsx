@@ -18,6 +18,7 @@ import GuideCalendar from './Guides/GuideCalendar';
 import GuideSettings from './Guides/GuideSettings';
 import PlatformTrustSection from './components/PlatformTrustSection';
 import Panier from './components/Panier'
+import Payment from './components/Payment'
 function App() {
   return (
     <Routes>
@@ -34,6 +35,7 @@ function App() {
         } />
         <Route path="/guides/:id" element={<GuideProfilePage />} />
         <Route path="/Required-Gear" element={<Panier />} />
+        <Route path="/Payment" element={<Payment />} />
       </Route>
 
       <Route element={<ProtectedRoute allowedRoles={[2]} />}>
