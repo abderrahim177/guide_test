@@ -114,7 +114,7 @@ export default function RegisterPage() {
               <h3 className="text-2xl font-bold text-slate-900 tracking-tight">Créer un compte</h3>
               <p className="text-slate-500 text-xs mt-1">Rejoignez-nous pour planifier votre prochaine aventure.</p>
             </div>
-
+            {errors && <p className='text-red-600 text-sm '> {errors}</p>}
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-3.5">
               
@@ -192,12 +192,44 @@ export default function RegisterPage() {
               </div>
 
               {/* Submit Button */}
-              <button 
+            
+              <button
               onClick={handleSubmit}
-                type="submit" 
-                className="w-full bg-emerald-800 hover:bg-emerald-900 active:scale-[0.99] text-white font-semibold py-3 rounded-xl text-xs transition-all shadow-md shadow-emerald-900/10 mt-2 cursor-pointer"
+                type="submit"
+                disabled={loading}
+                className={`w-full font-semibold py-3 rounded-xl text-xs transition-all shadow-md mt-2 cursor-pointer flex items-center justify-center gap-2 ${
+                  loading
+                    ? "bg-emerald-950/80 text-white/80 cursor-not-allowed shadow-none"
+                    : "bg-emerald-800 hover:bg-emerald-900 active:scale-[0.99] text-white shadow-emerald-900/10"
+                }`}
               >
-                Créer mon compte
+                {loading ? (
+                  <>
+                    <svg
+                      className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                    <span>Regester en cours ...</span>
+                  </>
+                ) : (
+                  "Créer mon compte"
+                )}
               </button>
             </form>
 

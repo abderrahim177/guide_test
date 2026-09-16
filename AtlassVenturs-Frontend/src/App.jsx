@@ -19,6 +19,8 @@ import GuideSettings from './Guides/GuideSettings';
 import PlatformTrustSection from './components/PlatformTrustSection';
 import Panier from './components/Panier'
 import Payment from './components/Payment'
+import InconfirmedBooking from './Guides/InconfirmedBooking'
+import PendingRequestPage from './components/request-pending';
 function App() {
   return (
     <Routes>
@@ -36,6 +38,7 @@ function App() {
         <Route path="/guides/:id" element={<GuideProfilePage />} />
         <Route path="/Required-Gear" element={<Panier />} />
         <Route path="/Payment" element={<Payment />} />
+        <Route path="/request-pending" element={<PendingRequestPage />} />
       </Route>
 
       <Route element={<ProtectedRoute allowedRoles={[2]} />}>
@@ -43,6 +46,7 @@ function App() {
           <Route index element={<Navigate to="/guide/requests" replace />} />
           <Route path="requests" element={<RequestsPage />} />
           <Route path="confirmed" element={<ConfirmedBookings />} />
+          <Route path="Inconfirmed" element={<InconfirmedBooking />} />
           <Route path="equipment" element={<EquipmentRent />} />
           <Route path="calendar" element={<GuideCalendar />} />
           <Route path="settings" element={<GuideSettings />} />

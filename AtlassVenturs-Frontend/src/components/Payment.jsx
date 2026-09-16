@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { CreditCard, Wallet, ShieldCheck, Lock, ArrowRight, CheckCircle2, MapPin, Calendar } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState("card");
@@ -8,11 +9,9 @@ export default function CheckoutPage() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // جلب البيانات من state مع تأمين الكود إلا كانت شي حاجة خاوية
   const guideData = location.state?.guideData || {};
   const bookingDetail = location.state?.bookingDetails || {};
 
-  // الثمن الإجمالي جا مباشرة من bookingDetail.totalPrice
   const totalAmount = Number(bookingDetail.totalPrice) || 250;
 
   const bookingDetails = {
@@ -27,6 +26,12 @@ export default function CheckoutPage() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsSubmitted(true);
+    // const token = localStorage.getItem('token')
+    // try{
+    //     const res = axios.post('http://127.0.0.1:8000/api/Payment', )
+    // }catch(err){
+
+    // }
   };
 
   if (isSubmitted) {

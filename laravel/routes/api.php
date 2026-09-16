@@ -8,12 +8,14 @@ use App\Http\Controllers\GuideController;
 use App\Http\Controllers\GetaileController;
 use App\Http\Controllers\MaterialsController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckStatusController;
 use App\Http\Controllers\ConfirmedBookingsController;
 use App\Http\Controllers\CreatEquipmentsController;
 use App\Http\Controllers\GetAllBookingsController;
 use App\Http\Controllers\ReserveBookingController;
 use App\Http\Controllers\UpdateStatusController;
 use App\Http\Controllers\getGuideBookingsController;
+use App\Http\Controllers\GetInconfirmedBookingController;
 
 // 1. Authentication (Register & Login)
 Route::post('/register', [AuthController::class, 'save']);
@@ -36,6 +38,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/cart/add', [CartController::class, 'addToBasket']);
         Route::post('/bookings' , [ReserveBookingController::class , 'store']);
         Route::get('/profile' , [AuthController::class , 'me']);
+        // Route::get('/bookings/{id}/status', [CheckStatusController::class, 'checkStatus']);
+        Route::get('/bookings/latest', [CheckStatusController::class, 'latestStatus']);
     }); 
 
     // Admin / Provider (Role 2)
@@ -47,7 +51,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('/bookings/{id}/status', [UpdateStatusController::class, 'update']);
         Route::patch('/bookingsRefuse/{id}/status', [UpdateStatusController::class, 'refuser']);
         Route::get('/ConfirmedBooking' , [ConfirmedBookingsController::class , 'ConfirmedBooking']);  
-        Route::get('/getGuideBookings' , [getGuideBookingsController::class , 'getGuideBookings']);  
+        Route::get('/getGuideBookings' , [getGuideBookingsController::class , 'getGuideBookings']); 
+        Route::get('/Inconfirmed_Booking' , [GetInconfirmedBookingController::class , 'index']); 
     }); 
 
     Route::post('/logout', [AuthController::class, 'logout']);

@@ -79,7 +79,7 @@ export default function EquipmentRentalPanier() {
   const totalAmount = guideServicePrice + gearSubtotal + insuranceFee;
 
   const handleProceedToCheckout = () => {
-    navigate("/checkout", {
+    navigate("/request-pending", {
       state: {
         guideData: guideData,
         bookingDetails: {

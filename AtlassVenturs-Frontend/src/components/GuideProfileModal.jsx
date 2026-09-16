@@ -19,29 +19,12 @@ import axios from "axios";
 export default function GuideProfilePage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { id } = useParams();
 
   const passedGuideData = location.state?.guideData;
   const [guideData, setGuideData] = useState(passedGuideData || null);
   const [loadingGuide, setLoadingGuide] = useState(!passedGuideData);
 
-  useEffect(() => {
-    if (!passedGuideData && id) {
-      const token = localStorage.getItem("token");
-      axios
-        .get(`http://127.0.0.1:8000/api/guides/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: "application/json",
-          },
-        })
-        .then((res) => {
-          setGuideData(res.data.guide || res.data);
-        })
-        .catch((err) => console.error("Error fetching guide:", err))
-        .finally(() => setLoadingGuide(false));
-    }
-  }, [passedGuideData, id]);
+ 
 
   const guide = {
     id: guideData?.id,
@@ -70,6 +53,7 @@ export default function GuideProfilePage() {
   const [paymentMethod, setPaymentMethod] = useState("deposit");
   const [userNeedsGear, setUserNeedsGear] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [formadata, setFormadata] = useState({
     name: "",
     phone: "",
@@ -131,6 +115,7 @@ export default function GuideProfilePage() {
   const handleBookingSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError(null);
     const token = localStorage.getItem("token");
     const payload = {
       guide_program_id: guide.program_id,
@@ -151,7 +136,7 @@ export default function GuideProfilePage() {
       setStep("confirmed");
     } catch (err) {
       if (err.response && err.response.status === 422) {
-        console.log("Validation Errors:", err.response.data.errors);
+        setError(err.response.data.errors);
       } else {
         console.error("Booking failed:", err);
       }
@@ -244,7 +229,6 @@ export default function GuideProfilePage() {
                 / day
               </div>
             </div>
-
             {/* Inputs Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Start Date */}
@@ -339,7 +323,9 @@ export default function GuideProfilePage() {
                     {isCheckoutOpen ? "Hide Details" : "Book Trek Now"}
                   </span>
                   <ChevronDown
-                    className={`w-4 h-4 transition-transform duration-500 ease-in-out ${isCheckoutOpen ? "rotate-180" : ""}`}
+                    className={`w-4 h-4 transition-transform duration-500 ease-in-out ${
+                      isCheckoutOpen ? "rotate-180" : ""
+                    }`}
                   />
                 </button>
               </div>
@@ -402,6 +388,14 @@ export default function GuideProfilePage() {
                       </div>
                     </div>
 
+                    {error && typeof error === "object" && (
+                      <div className="bg-red-50 border border-red-200 text-red-700 p-3 rounded-xl text-xs space-y-1">
+                        {Object.entries(error).map(([field, messages]) => (
+                          <p key={field}>• {messages}</p>
+                        ))}
+                      </div>
+                    )}
+
                     <form
                       onSubmit={handleBookingSubmit}
                       className="space-y-5 text-xs"
@@ -416,7 +410,6 @@ export default function GuideProfilePage() {
                             value={formadata.name}
                             onChange={handleInputChange}
                             type="text"
-                            required
                             placeholder="e.g. Yassine El Amrani"
                             className="w-full p-3 bg-white border border-emerald-200/90 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
                           />
@@ -430,7 +423,6 @@ export default function GuideProfilePage() {
                             value={formadata.phone}
                             onChange={handleInputChange}
                             type="tel"
-                            required
                             placeholder="+212 600 000 000"
                             className="w-full p-3 bg-white border border-emerald-200/90 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
                           />
@@ -587,16 +579,6 @@ export default function GuideProfilePage() {
                       </div>
                     </div>
 
-                    {/* <button
-                      type="button"
-                      onClick={() => {
-                        setIsCheckoutOpen(false);
-                        setStep("checkout");
-                      }}
-                      className="w-full py-3 bg-white hover:bg-emerald-100/50 text-stone-800 border border-emerald-200/80 rounded-xl text-xs font-bold transition-colors cursor-pointer"
-                    >
-                      Done & Close
-                    </button> */}
                     {userNeedsGear && (
                       <button
                         type="button"
@@ -622,7 +604,7 @@ export default function GuideProfilePage() {
                       <button
                         type="button"
                         onClick={() =>
-                          navigate("/Payment", {
+                          navigate("/request-pending", {
                             state: {
                               guideData: guide,
                               bookingDetails: {
@@ -686,7 +668,7 @@ export default function GuideProfilePage() {
                 <h4 className="text-sm font-bold text-stone-900 flex items-center gap-2">
                   <MapPin className="w-4 h-4 text-stone-700" /> Covered Regions
                 </h4>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-prop gap-2">
                   {[
                     "Ait Bouguemez",
                     "Ouzoud Falls",
@@ -703,28 +685,6 @@ export default function GuideProfilePage() {
                   ))}
                 </div>
               </div>
-            </div>
-          </div>
-
-          <div className="space-y-6">
-            <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-2xs space-y-4">
-              <h4 className="text-sm font-bold text-stone-900">
-                Why book with this guide?
-              </h4>
-              <ul className="text-xs text-stone-600 space-y-2.5">
-                <li className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                  Local native expert of High Atlas trails
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                  Multi-language fluency
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                  Certified safety equipment handled
-                </li>
-              </ul>
             </div>
           </div>
         </div>

@@ -12,13 +12,13 @@ import {
   X,
   Compass,
   ShieldCheck,
+  Clock,
 } from "lucide-react";
 
 export default function GuideDashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
 
-  // Mock Guide Profile
   const guideInfo = {
     name: "Ayoub Amrani",
     role: "Certified Mountain Guide",
@@ -36,16 +36,15 @@ export default function GuideDashboardLayout() {
   const navItems = [
     { name: "Booking Requests", path: "/guide/requests", icon: Inbox, badge: "3" },
     { name: "Confirmed Bookings", path: "/guide/confirmed", icon: CheckCircle2 },
+    { name: "InConfirmed Bookings", path: "/guide/Inconfirmed", icon: Clock },
     { name: "Equipment for Rent", path: "/guide/equipment", icon: Package },
     { name: "My Calendar", path: "/guide/calendar", icon: Calendar },
     { name: "Profile & Settings", path: "/guide/settings", icon: Settings },
   ];
 
   return (
-    // h-screen w-screen overflow-hidden لضمان عدم سكرول الصفحة كاملة
     <div className="h-screen w-screen overflow-hidden bg-slate-50 text-slate-800 font-sans flex flex-col text-xs">
       
-      {/* ----------------- HEADER (Fixe) ----------------- */}
       <header className="h-14 bg-white border-b border-slate-200 shrink-0 px-4 flex items-center justify-between shadow-sm z-30">
         <div className="flex items-center gap-3">
           <button
@@ -68,7 +67,6 @@ export default function GuideDashboardLayout() {
           </Link>
         </div>
 
-        {/* Header Actions */}
         <div className="flex items-center gap-4">
           <button className="relative p-1.5 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors">
             <Bell className="w-4 h-4" />
@@ -98,10 +96,8 @@ export default function GuideDashboardLayout() {
         </div>
       </header>
 
-      {/* Main Container */}
       <div className="flex-1 flex overflow-hidden relative">
         
-        {/* Mobile Backdrop Overlay */}
         {sidebarOpen && (
           <div 
             className="fixed inset-0 bg-slate-900/40 z-10 md:hidden"
@@ -109,14 +105,12 @@ export default function GuideDashboardLayout() {
           />
         )}
 
-        {/* ----------------- ASIDE / SIDEBAR (Fixe) ----------------- */}
         <aside
           className={`fixed md:static inset-y-0 left-0 z-20 w-60 bg-white border-r border-slate-200 flex flex-col justify-between shrink-0 transition-transform duration-300 transform ${
             sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
           } pt-14 md:pt-0 h-full`}
         >
           <div className="p-3 space-y-4 overflow-y-auto">
-            {/* Guide Quick Profile Box */}
             <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 flex items-center gap-3">
               <div className="w-9 h-9 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-xs">
                 AA
@@ -132,7 +126,6 @@ export default function GuideDashboardLayout() {
               </div>
             </div>
 
-            {/* Navigation Menu */}
             <nav className="space-y-1">
               <p className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">
                 Main Menu
@@ -167,7 +160,6 @@ export default function GuideDashboardLayout() {
             </nav>
           </div>
 
-          {/* Logout Section */}
           <div className="p-3 border-t border-slate-100 shrink-0">
             <button
               onClick={handleLogout}
@@ -179,7 +171,6 @@ export default function GuideDashboardLayout() {
           </div>
         </aside>
 
-        {/* ----------------- CONTENT AREA (Scrollable) ----------------- */}
         <main className="flex-1 overflow-y-auto p-4 md:p-6 h-full">
           <div className="max-w-6xl mx-auto">
             <Outlet />
