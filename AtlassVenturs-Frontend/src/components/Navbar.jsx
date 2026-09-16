@@ -186,7 +186,13 @@ const Navbar = () => {
         </a>
 
         {/* Loading Spinner or Payment Button */}
-        {loading ? (
+
+      </nav>
+
+      {/* User Section / Guest Buttons */}
+      {user ? (
+        <div className="flex items-center gap-3">
+          {loading ? (
           <div className="flex items-center gap-2 px-3 py-1.5 text-xs text-stone-500 bg-stone-100 rounded-xl border border-stone-200">
             <Loader2 className="w-4 h-4 animate-spin text-[#1C3A27]" />
             <span>Vérification...</span>
@@ -202,11 +208,6 @@ const Navbar = () => {
             </button>
           )
         )}
-      </nav>
-
-      {/* User Section / Guest Buttons */}
-      {user ? (
-        <div className="flex items-center gap-3">
           {/* Notification Bell Component */}
           <div className="relative" ref={notifRef}>
             <button
