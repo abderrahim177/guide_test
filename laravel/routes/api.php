@@ -40,6 +40,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/profile' , [AuthController::class , 'me']);
         // Route::get('/bookings/{id}/status', [CheckStatusController::class, 'checkStatus']);
         Route::get('/bookings/latest', [CheckStatusController::class, 'latestStatus']);
+        Route::get('/materials' , [MaterialsController::class , 'getmaterials']);
+        Route::post('ReserveMaterilas' , [MaterialsController::class , 'store']);
     }); 
 
     // Admin / Provider (Role 2)

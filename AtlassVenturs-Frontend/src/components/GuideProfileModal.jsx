@@ -71,13 +71,12 @@ export default function GuideProfilePage() {
   };
 
   const selectedDays = calculateDays();
-  const basePricePerDay = guideData?.price_per_day || 350;
+const basePricePerDay = Number(guideData?.price_per_day) || 350;
   const gearPricePerDay = 150;
 
   const currentGearStatus = isCheckoutOpen ? userNeedsGear : includeGear;
-  const totalPrice =
-    (basePricePerDay + (currentGearStatus ? gearPricePerDay : 0)) *
-    selectedDays;
+  
+  const totalPrice = Number(((basePricePerDay + (currentGearStatus ? gearPricePerDay : 0)) * selectedDays).toFixed(2));
   const depositAmount = Math.round(totalPrice * 0.2);
 
   // Handlers

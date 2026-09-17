@@ -1,6 +1,21 @@
-import React, { useState } from "react";
-import { Backpack, Shield, Tent, Compass, Flame, SunMedium, Droplets, Trash2, Plus, Minus, Check, ArrowRight, ShoppingCart } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import {
+  Backpack,
+  Shield,
+  Tent,
+  Compass,
+  Flame,
+  SunMedium,
+  Droplets,
+  Trash2,
+  Plus,
+  Minus,
+  Check,
+  ArrowRight,
+  ShoppingCart,
+} from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function EquipmentRentalPanier() {
   const location = useLocation();
@@ -8,94 +23,156 @@ export default function EquipmentRentalPanier() {
 
   const guideData = location.state?.guideData || {};
   const bookingDetails = location.state?.bookingDetails || {};
+    console.log(guideData);
+    // console.log(bookingDetails);
+  const guideServicePrice = Number(bookingDetails.totalPrice) || 0;
 
-  const guideServicePrice = Number(bookingDetails.totalPrice) ;
-  
-  const gearPricePerDay = Number(guideData.gearPrice) || 150;
+  const [items, setItems] = useState([]);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const [items, setItems] = useState([
-    {
-      id: 1,
-      name: "3-Season High Atlas Tent",
-      category: "Camping",
-      quantity: 1,
-      icon: <Tent className="w-5 h-5 text-emerald-600" />,
-    },
-    {
-      id: 2,
-      name: "Sleeping Bag (-5°C Comfort)",
-      category: "Sleeping",
-      quantity: 1,
-      icon: <Backpack className="w-5 h-5 text-emerald-600" />,
-    },
-    {
-      id: 3,
-      name: "Telescopic Trekking Poles",
-      category: "Trekking",
-      quantity: 2,
-      icon: <Compass className="w-5 h-5 text-emerald-600" />,
-    },
-    {
-      id: 4,
-      name: "Portable Camping Stove + Gas",
-      category: "Cooking",
-      quantity: 0,
-      icon: <Flame className="w-5 h-5 text-emerald-600" />,
-    },
-    {
-      id: 5,
-      name: "LED Headlamp (Rechargeable)",
-      category: "Lighting",
-      quantity: 0,
-      icon: <SunMedium className="w-5 h-5 text-emerald-600" />,
-    },
-    {
-      id: 6,
-      name: "Thermal Water Flask (1.5L)",
-      category: "Hydration",
-      quantity: 0,
-      icon: <Droplets className="w-5 h-5 text-emerald-600" />,
-    },
-  ]);
+  const handelFetchData = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await axios.get("http://127.0.0.1:8000/api/materials", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      });
+      const result = Array.isArray(response.data)
+        ? response.data
+        : response.data.data || [];
 
-  const [rentalDays, setRentalDays] = useState(bookingDetails.startDate && bookingDetails.endDate ? 3 : 3);
+      const formattedItems = result.map((item) => ({
+        ...item,
+        quantity: 0,
+        icon: <Tent className="w-5 h-5 text-emerald-600" />,
+        category: item.equipment?.name || "Equipment",
+      }));
+
+      setItems(formattedItems);
+    } catch (err) {
+      console.error(
+        "Erreur lors de la vérification:",
+        err.response?.status || err.message,
+      );
+      setError(err.response?.status || err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    handelFetchData();
+  }, []);
+
+  const [rentalDays, setRentalDays] = useState(
+    bookingDetails.startDate && bookingDetails.endDate ? 3 : 3,
+  );
   const [insuranceSelected, setInsuranceSelected] = useState(true);
 
   const updateQuantity = (id, delta) => {
-    setItems(items.map(item => {
-      if (item.id === id) {
-        const newQty = item.quantity + delta;
-        return { ...item, quantity: newQty >= 0 ? newQty : 0 };
-      }
-      return item;
-    }));
+    setItems(
+      items.map((item) => {
+        if (item.id === id) {
+          const newQty = item.quantity + delta;
+          const maxStock = item.stock || 99;
+          return {
+            ...item,
+            quantity:
+              newQty >= 0 && newQty <= maxStock ? newQty : item.quantity,
+          };
+        }
+        return item;
+      }),
+    );
   };
 
-  const cartItems = items.filter(item => item.quantity > 0);
-
-  const gearSubtotal = cartItems.length > 0 ? gearPricePerDay * rentalDays : 0;
-  const insuranceFee = insuranceSelected && cartItems.length > 0 ? 25 * rentalDays : 0;
+  const cartItems = items.filter((item) => item.quantity > 0);
+  const gearSubtotal = cartItems.reduce((sum, item) => {
+    const pricePerDay = Number(item.price_per_day) || 0;
+    return sum + pricePerDay * item.quantity * rentalDays;
+  }, 0);
+ const handleProceedToCheckout = async () => {
+  const token = localStorage.getItem("token");
+  const GuideId = localStorage.getItem('selectedGuideId');
   
-  const totalAmount = guideServicePrice + gearSubtotal + insuranceFee;
+  const orderData = {
+    guide_id: GuideId,
+    total_price: totalAmount,
+    pickup_date: bookingDetails.startDate,
+    return_date: bookingDetails.endDate,
+    items: cartItems.map((item) => ({
+      equipment_id: item.equipment_id || item.id, 
+      quantity: item.quantity,
+      price_per_day: Number(item.price_per_day) || 0,
+    })),
+  };
 
-  const handleProceedToCheckout = () => {
+  setLoading(true);
+  try {
+    const response = await axios.post(
+      "http://127.0.0.1:8000/api/ReserveMaterilas",
+      orderData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+          "Content-Type": "application/json", 
+        },
+      }
+    );
+
+    console.log("Order created successfully:", response.data);
+
+    const cleanGuideData = guideData ? {
+      id: guideData.id || guideData.user_id,
+      name: guideData.name || guideData.guide?.name || "",
+      region: guideData.region?.name || guideData.region || "",
+      price_per_day: guideData.price_per_day || 0,
+    } : {};
+
+    const cleanCartItems = cartItems.map((item) => ({
+      id: item.id || item.equipment_id,
+      name: item.name || item.title || "",
+      price_per_day: Number(item.price_per_day) || 0,
+      quantity: item.quantity || 1,
+      image: typeof item.image === 'string' ? item.image : '',
+    }));
+
     navigate("/request-pending", {
       state: {
-        guideData: guideData,
+        guideData: cleanGuideData,
         bookingDetails: {
-          ...bookingDetails,
-          totalPrice: totalAmount, 
+          startDate: bookingDetails.startDate,
+          endDate: bookingDetails.endDate,
+          totalPrice: totalAmount,
           rentalDays: rentalDays,
           gearSubtotal: gearSubtotal,
           insuranceFee: insuranceFee,
-        }
-      }
+          rentedEquipment: cleanCartItems,
+        },
+      },
     });
-  };
+
+  } catch (err) {
+    console.error("Full error details:", err?.response?.data || err.message); 
+    setError(err?.response?.data?.message || err.message || "Something went wrong");
+  } finally {
+    setLoading(false);
+  } 
+};
+  const insuranceFee =
+    insuranceSelected && cartItems.length > 0 ? 25 * rentalDays : 0;
+
+  const totalAmount = Number(
+    (guideServicePrice + gearSubtotal + insuranceFee).toFixed(2),
+  );
 
   return (
     <div className="max-w-6xl mx-auto p-4 sm:p-6 font-['Poppins',sans-serif] text-stone-800">
-      
       <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-stone-200 pb-4">
         <div>
           <span className="bg-emerald-100 text-emerald-800 text-[11px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
@@ -106,16 +183,20 @@ export default function EquipmentRentalPanier() {
           </h2>
         </div>
         <div className="bg-emerald-50 border border-emerald-200 px-4 py-2 rounded-2xl flex items-center gap-3">
-          <span className="text-xs font-bold text-stone-600">Rental Duration:</span>
+          <span className="text-xs font-bold text-stone-600">
+            Rental Duration:
+          </span>
           <div className="flex items-center gap-2">
-            <button 
+            <button
               onClick={() => setRentalDays(Math.max(1, rentalDays - 1))}
               className="w-7 h-7 bg-white border border-emerald-300 rounded-lg flex items-center justify-center font-bold text-emerald-700 hover:bg-emerald-100 cursor-pointer transition-all"
             >
               -
             </button>
-            <span className="font-extrabold text-sm text-emerald-900 w-14 text-center">{rentalDays} {rentalDays === 1 ? 'Day' : 'Days'}</span>
-            <button 
+            <span className="font-extrabold text-sm text-emerald-900 w-14 text-center">
+              {rentalDays} {rentalDays === 1 ? "Day" : "Days"}
+            </span>
+            <button
               onClick={() => setRentalDays(rentalDays + 1)}
               className="w-7 h-7 bg-white border border-emerald-300 rounded-lg flex items-center justify-center font-bold text-emerald-700 hover:bg-emerald-100 cursor-pointer transition-all"
             >
@@ -126,76 +207,106 @@ export default function EquipmentRentalPanier() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
         <div className="lg:col-span-2 space-y-4">
           <h3 className="text-sm font-bold text-stone-700 uppercase tracking-wide mb-2">
-            Available Equipment Catalogue (Guide Rate: {gearPricePerDay} MAD/day)
+            Available Equipment Catalogue
           </h3>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {items.map((item) => (
-              <div 
-                key={item.id} 
-                className={`bg-white border rounded-2xl p-4 flex flex-col justify-between transition-all ${
-                  item.quantity > 0 ? 'border-emerald-500 bg-emerald-50/20 shadow-xs' : 'border-stone-200 hover:border-emerald-300'
-                }`}
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="w-10 h-10 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center justify-center">
-                      {item.icon}
+
+          {loading ? (
+            <p className="text-xs text-stone-500 text-center py-10">
+              Loading equipment...
+            </p>
+          ) : error ? (
+            <p className="text-xs text-red-500 text-center py-10">
+              Error loading equipment: {error}
+            </p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {items.map((item) => (
+                <div
+                  key={item.id}
+                  className={`bg-white border rounded-2xl p-4 flex flex-col justify-between transition-all ${
+                    item.quantity > 0
+                      ? "border-emerald-500 bg-emerald-50/20 shadow-xs"
+                      : "border-stone-200 hover:border-emerald-300"
+                  }`}
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="w-10 h-10 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center justify-center">
+                        {item.icon}
+                      </div>
+                      <span className="text-[10px] uppercase font-bold text-emerald-700 bg-emerald-100/70 px-2.5 py-0.5 rounded-full">
+                        {item.equipment?.name || "Gear"}
+                      </span>
                     </div>
-                    <span className="text-[10px] uppercase font-bold text-emerald-700 bg-emerald-100/70 px-2.5 py-0.5 rounded-full">
-                      {item.category}
+                    <h4 className="font-bold text-stone-900 text-sm mb-1">
+                      {item.equipment?.name || "Equipment"}
+                    </h4>
+                    <span className="text-xs text-emerald-700 font-bold block mb-1">
+                      {item.price_per_day} MAD / day
+                    </span>
+                    <span className="text-[11px] text-stone-500 font-medium block">
+                      Stock available: {item.stock}
                     </span>
                   </div>
-                  <h4 className="font-bold text-stone-900 text-sm mb-1">
-                    {item.name}
-                  </h4>
-                  <span className="text-xs text-stone-500 font-medium">
-                    Included in Gear Pack
-                  </span>
-                </div>
 
-                <div className="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between">
-                  <span className="text-xs font-bold text-stone-600">Quantity:</span>
-                  <div className="flex items-center bg-stone-50 border border-stone-200 rounded-xl p-1">
-                    <button 
-                      onClick={() => updateQuantity(item.id, -1)}
-                      className="w-6 h-6 bg-white rounded-lg flex items-center justify-center text-stone-600 hover:bg-stone-100 transition-colors shadow-2xs cursor-pointer"
-                    >
-                      <Minus className="w-3 h-3" />
-                    </button>
-                    <span className="w-7 text-center text-xs font-bold text-stone-900">{item.quantity}</span>
-                    <button 
-                      onClick={() => updateQuantity(item.id, 1)}
-                      className="w-6 h-6 bg-white rounded-lg flex items-center justify-center text-stone-600 hover:bg-stone-100 transition-colors shadow-2xs cursor-pointer"
-                    >
-                      <Plus className="w-3 h-3" />
-                    </button>
+                  <div className="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between">
+                    <span className="text-xs font-bold text-stone-600">
+                      Quantity:
+                    </span>
+                    <div className="flex items-center bg-stone-50 border border-stone-200 rounded-xl p-1">
+                      <button
+                        onClick={() => updateQuantity(item.id, -1)}
+                        className="w-6 h-6 bg-white rounded-lg flex items-center justify-center text-stone-600 hover:bg-stone-100 transition-colors shadow-2xs cursor-pointer"
+                      >
+                        <Minus className="w-3 h-3" />
+                      </button>
+                      <span className="w-7 text-center text-xs font-bold text-stone-900">
+                        {item.quantity}
+                      </span>
+                      <button
+                        onClick={() => updateQuantity(item.id, 1)}
+                        className="w-6 h-6 bg-white rounded-lg flex items-center justify-center text-stone-600 hover:bg-stone-100 transition-colors shadow-2xs cursor-pointer"
+                      >
+                        <Plus className="w-3 h-3" />
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
 
-          <div 
+          <div
             onClick={() => setInsuranceSelected(!insuranceSelected)}
             className={`p-4 rounded-2xl border cursor-pointer flex items-center justify-between transition-all mt-4 ${
-              insuranceSelected ? 'border-emerald-600 bg-emerald-50/40 shadow-xs' : 'border-stone-200 bg-white'
+              insuranceSelected
+                ? "border-emerald-600 bg-emerald-50/40 shadow-xs"
+                : "border-stone-200 bg-white"
             }`}
           >
             <div className="flex items-center gap-3">
-              <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-colors ${insuranceSelected ? 'bg-emerald-600 text-white' : 'bg-stone-100 text-stone-400'}`}>
+              <div
+                className={`w-8 h-8 rounded-xl flex items-center justify-center transition-colors ${insuranceSelected ? "bg-emerald-600 text-white" : "bg-stone-100 text-stone-400"}`}
+              >
                 <Shield className="w-4 h-4" />
               </div>
               <div>
-                <span className="font-bold text-xs text-stone-900 block">Damage & Loss Protection (Optional)</span>
-                <span className="text-[11px] text-stone-500">25 MAD per rental day for all items.</span>
+                <span className="font-bold text-xs text-stone-900 block">
+                  Damage & Loss Protection (Optional)
+                </span>
+                <span className="text-[11px] text-stone-500">
+                  25 MAD per rental day for all items.
+                </span>
               </div>
             </div>
-            <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all ${insuranceSelected ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-stone-300 bg-white'}`}>
-              {insuranceSelected && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+            <div
+              className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all ${insuranceSelected ? "bg-emerald-600 border-emerald-600 text-white" : "border-stone-300 bg-white"}`}
+            >
+              {insuranceSelected && (
+                <Check className="w-3.5 h-3.5 stroke-[3]" />
+              )}
             </div>
           </div>
         </div>
@@ -215,12 +326,19 @@ export default function EquipmentRentalPanier() {
               </p>
             ) : (
               cartItems.map((item) => (
-                <div key={item.id} className="flex items-center justify-between bg-white p-2.5 rounded-xl border border-emerald-100 text-xs">
+                <div
+                  key={item.id}
+                  className="flex items-center justify-between bg-white p-2.5 rounded-xl border border-emerald-100 text-xs"
+                >
                   <div>
-                    <span className="font-bold text-stone-900 block">{item.name}</span>
-                    <span className="text-[10px] text-stone-500">Qty: {item.quantity}</span>
+                    <span className="font-bold text-stone-900 block">
+                      {item.equipment?.name}
+                    </span>
+                    <span className="text-[10px] text-stone-500">
+                      Qty: {item.quantity} × {item.price_per_day} MAD
+                    </span>
                   </div>
-                  <button 
+                  <button
                     onClick={() => updateQuantity(item.id, -item.quantity)}
                     className="text-stone-400 hover:text-red-500 transition-colors p-1 cursor-pointer"
                   >
@@ -234,35 +352,43 @@ export default function EquipmentRentalPanier() {
           <div className="space-y-2 text-xs pt-3 border-t border-emerald-200/80 font-medium text-stone-600">
             <div className="flex justify-between">
               <span>Guide Service Fee:</span>
-              <span className="font-bold text-stone-900">{guideServicePrice} MAD</span>
+              <span className="font-bold text-stone-900">
+                {guideServicePrice} MAD
+              </span>
             </div>
             <div className="flex justify-between">
               <span>Equipment Rental ({rentalDays} Days):</span>
-              <span className="font-bold text-stone-900">{gearSubtotal} MAD</span>
+              <span className="font-bold text-stone-900">
+                {gearSubtotal.toFixed(2)} MAD
+              </span>
             </div>
             <div className="flex justify-between">
               <span>Protection Fee:</span>
-              <span className="font-bold text-stone-900">{insuranceFee} MAD</span>
+              <span className="font-bold text-stone-900">
+                {insuranceFee} MAD
+              </span>
             </div>
           </div>
 
           <div className="border-t border-emerald-200 pt-4 flex items-center justify-between">
-            <span className="font-bold text-stone-900 text-sm">Total Amount:</span>
-            <span className="font-extrabold text-xl text-emerald-700">{totalAmount} MAD</span>
+            <span className="font-bold text-stone-900 text-sm">
+              Total Amount:
+            </span>
+            <span className="font-extrabold text-xl text-emerald-700">
+              {totalAmount.toFixed(2)} MAD
+            </span>
           </div>
 
-          <button 
+          <button
             onClick={handleProceedToCheckout}
             disabled={cartItems.length === 0}
-            className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold py-3.5 px-4 rounded-2xl text-xs transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-98"
+            className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3.5 px-4 rounded-2xl text-xs transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-98 "
           >
             <span>Proceed to Checkout</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>
-
       </div>
-
     </div>
   );
 }

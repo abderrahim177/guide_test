@@ -28,6 +28,7 @@ export default function GuidesSection() {
       });
       const result = response.data.guides || [];
       setdata(result);
+      console.log(result);
     } catch (err) {
       console.error(err);
       seterror('impossible de charger data !');
@@ -42,8 +43,8 @@ export default function GuidesSection() {
 
   const handleGuideClick = (guide) => {
     navigate(`/guides/${guide.id}`, { state: { guideData: guide } });
+    localStorage.setItem('selectedGuideId', guide.user_id); 
   };
-
   return (
     <section className="w-full max-w-6xl mx-auto px-4 py-10 font-['Poppins',sans-serif] bg-[#FAF8F5]">
       {/* Top Header Section */}
@@ -89,7 +90,7 @@ export default function GuidesSection() {
               >
                 <img
                   src={staticImage}
-                  alt={item.guide?.name}
+                  alt={item.guide?.id}
                   className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
                 />
               </div>
