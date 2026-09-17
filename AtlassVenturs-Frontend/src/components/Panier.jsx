@@ -23,8 +23,6 @@ export default function EquipmentRentalPanier() {
 
   const guideData = location.state?.guideData || {};
   const bookingDetails = location.state?.bookingDetails || {};
-    console.log(guideData);
-    // console.log(bookingDetails);
   const guideServicePrice = Number(bookingDetails.totalPrice) || 0;
 
   const [items, setItems] = useState([]);
@@ -41,14 +39,13 @@ export default function EquipmentRentalPanier() {
           "Content-Type": "application/json",
         },
       });
-      const result = Array.isArray(response.data)
+      const result = Array.isArray(response.path || response.data)
         ? response.data
         : response.data.data || [];
 
       const formattedItems = result.map((item) => ({
         ...item,
         quantity: 0,
-        icon: <Tent className="w-5 h-5 text-emerald-600" />,
         category: item.equipment?.name || "Equipment",
       }));
 
@@ -91,79 +88,51 @@ export default function EquipmentRentalPanier() {
   };
 
   const cartItems = items.filter((item) => item.quantity > 0);
+
   const gearSubtotal = cartItems.reduce((sum, item) => {
-    const pricePerDay = Number(item.price_per_day) || 0;
-    return sum + pricePerDay * item.quantity * rentalDays;
+    const pricePerDay = Number(item.price_per_day) || 0; 
+    return sum + (pricePerDay * rentalDays);
   }, 0);
- const handleProceedToCheckout = async () => {
-  const token = localStorage.getItem("token");
-  const GuideId = localStorage.getItem('selectedGuideId');
-  
-  const orderData = {
-    guide_id: GuideId,
-    total_price: totalAmount,
-    pickup_date: bookingDetails.startDate,
-    return_date: bookingDetails.endDate,
-    items: cartItems.map((item) => ({
-      equipment_id: item.equipment_id || item.id, 
-      quantity: item.quantity,
-      price_per_day: Number(item.price_per_day) || 0,
-    })),
+
+  const handleProceedToCheckout = async () => {
+    const token = localStorage.getItem("token");
+    const GuideId = localStorage.getItem('selectedGuideId');
+    
+    const orderData = {
+      guide_id: GuideId,
+      total_price: totalAmount,
+      pickup_date: bookingDetails.startDate,
+      return_date: bookingDetails.endDate,
+      items: cartItems.map((item) => ({
+        equipment_id: item.equipment_id || item.id, 
+        quantity: item.quantity,
+        price_per_day: Number(item.price_per_day) || 0,
+      })),
+    };
+
+    setLoading(true);
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/ReserveMaterilas",
+        orderData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+            "Content-Type": "application/json", 
+          },
+        }
+      );
+      navigate("/request-pending");
+
+    } catch (err) {
+      console.error("Full error details:", err?.response?.data || err.message); 
+      setError(err?.response?.data?.message || err.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    } 
   };
 
-  setLoading(true);
-  try {
-    const response = await axios.post(
-      "http://127.0.0.1:8000/api/ReserveMaterilas",
-      orderData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: "application/json",
-          "Content-Type": "application/json", 
-        },
-      }
-    );
-
-    console.log("Order created successfully:", response.data);
-
-    const cleanGuideData = guideData ? {
-      id: guideData.id || guideData.user_id,
-      name: guideData.name || guideData.guide?.name || "",
-      region: guideData.region?.name || guideData.region || "",
-      price_per_day: guideData.price_per_day || 0,
-    } : {};
-
-    const cleanCartItems = cartItems.map((item) => ({
-      id: item.id || item.equipment_id,
-      name: item.name || item.title || "",
-      price_per_day: Number(item.price_per_day) || 0,
-      quantity: item.quantity || 1,
-      image: typeof item.image === 'string' ? item.image : '',
-    }));
-
-    navigate("/request-pending", {
-      state: {
-        guideData: cleanGuideData,
-        bookingDetails: {
-          startDate: bookingDetails.startDate,
-          endDate: bookingDetails.endDate,
-          totalPrice: totalAmount,
-          rentalDays: rentalDays,
-          gearSubtotal: gearSubtotal,
-          insuranceFee: insuranceFee,
-          rentedEquipment: cleanCartItems,
-        },
-      },
-    });
-
-  } catch (err) {
-    console.error("Full error details:", err?.response?.data || err.message); 
-    setError(err?.response?.data?.message || err.message || "Something went wrong");
-  } finally {
-    setLoading(false);
-  } 
-};
   const insuranceFee =
     insuranceSelected && cartItems.length > 0 ? 25 * rentalDays : 0;
 
@@ -233,8 +202,8 @@ export default function EquipmentRentalPanier() {
                 >
                   <div>
                     <div className="flex items-center justify-between mb-3">
-                      <div className="w-10 h-10 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center justify-center">
-                        {item.icon}
+                      <div className="w-10 h-10 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center justify-center text-emerald-600">
+                        <Tent className="w-5 h-5" />
                       </div>
                       <span className="text-[10px] uppercase font-bold text-emerald-700 bg-emerald-100/70 px-2.5 py-0.5 rounded-full">
                         {item.equipment?.name || "Gear"}
@@ -335,7 +304,7 @@ export default function EquipmentRentalPanier() {
                       {item.equipment?.name}
                     </span>
                     <span className="text-[10px] text-stone-500">
-                      Qty: {item.quantity} × {item.price_per_day} MAD
+                      Qty: {item.quantity} | {item.price_per_day} MAD/day
                     </span>
                   </div>
                   <button
@@ -382,7 +351,7 @@ export default function EquipmentRentalPanier() {
           <button
             onClick={handleProceedToCheckout}
             disabled={cartItems.length === 0}
-            className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3.5 px-4 rounded-2xl text-xs transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-98 "
+            className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3.5 px-4 rounded-2xl text-xs transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-98"
           >
             <span>Proceed to Checkout</span>
             <ArrowRight className="w-4 h-4" />
