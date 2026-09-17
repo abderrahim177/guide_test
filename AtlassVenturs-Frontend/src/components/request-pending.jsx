@@ -16,7 +16,7 @@ const PendingRequestPage = () => {
 
   const guideData = location.state?.guideData || {};
   const bookingDetails = location.state?.bookingDetails || {};
-
+    console.log(guideData);
   const [isApproved, setIsApproved] = useState(false);
   const [loading, setLoading] = useState(true);
 

@@ -71,8 +71,8 @@ export default function GuideProfilePage() {
   };
 
   const selectedDays = calculateDays();
-const basePricePerDay = Number(guideData?.price_per_day) || 350;
-  const gearPricePerDay = 150;
+    const basePricePerDay = Number(guideData?.price_per_day) || 350;
+    const gearPricePerDay = 150;
 
   const currentGearStatus = isCheckoutOpen ? userNeedsGear : includeGear;
   
@@ -358,7 +358,7 @@ const basePricePerDay = Number(guideData?.price_per_day) || 350;
               <div className="p-6 sm:p-8 space-y-6">
                 {step === "checkout" ? (
                   <div className="space-y-6">
-                    <div className="bg-white p-4 rounded-2xl border border-emerald-200/80 text-xs grid grid-cols-1 sm:grid-cols-3 gap-4 shadow-2xs">
+                    {/* <div className="bg-white p-4 rounded-2xl border border-emerald-200/80 text-xs grid grid-cols-1 sm:grid-cols-3 gap-4 shadow-2xs">
                       <div>
                         <span className="text-stone-500 block font-medium">
                           Dates & Duration:
@@ -385,7 +385,7 @@ const basePricePerDay = Number(guideData?.price_per_day) || 350;
                           {totalPrice} MAD
                         </span>
                       </div>
-                    </div>
+                    </div> */}
 
                     {error && typeof error === "object" && (
                       <div className="bg-red-50 border border-red-200 text-red-700 p-3 rounded-xl text-xs space-y-1">
@@ -663,11 +663,11 @@ const basePricePerDay = Number(guideData?.price_per_day) || 350;
                 </ul>
               </div>
 
-              <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-2xs space-y-4">
+              <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-2xs space-y-4 ">
                 <h4 className="text-sm font-bold text-stone-900 flex items-center gap-2">
                   <MapPin className="w-4 h-4 text-stone-700" /> Covered Regions
                 </h4>
-                <div className="flex flex-prop gap-2">
+                <div className="grid grid-cols-2 gap-2">
                   {[
                     "Ait Bouguemez",
                     "Ouzoud Falls",

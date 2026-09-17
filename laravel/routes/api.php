@@ -16,6 +16,7 @@ use App\Http\Controllers\ReserveBookingController;
 use App\Http\Controllers\UpdateStatusController;
 use App\Http\Controllers\getGuideBookingsController;
 use App\Http\Controllers\GetInconfirmedBookingController;
+use App\Http\Controllers\PaymentController;
 
 // 1. Authentication (Register & Login)
 Route::post('/register', [AuthController::class, 'save']);
@@ -42,6 +43,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/bookings/latest', [CheckStatusController::class, 'latestStatus']);
         Route::get('/materials' , [MaterialsController::class , 'getmaterials']);
         Route::post('ReserveMaterilas' , [MaterialsController::class , 'store']);
+        Route::get('/GetPaymentInformation' , [PaymentController::class , 'index']);
     }); 
 
     // Admin / Provider (Role 2)

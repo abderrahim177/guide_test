@@ -46,6 +46,7 @@ export default function EquipmentRentalPanier() {
       const formattedItems = result.map((item) => ({
         ...item,
         quantity: 0,
+        // حيدنا الـ icon من هنا باش ما يدارش في الـ navigate state ويسبب إيرور
         category: item.equipment?.name || "Equipment",
       }));
 
@@ -89,8 +90,10 @@ export default function EquipmentRentalPanier() {
 
   const cartItems = items.filter((item) => item.quantity > 0);
 
+  // ── التعديل هنا: الثمن كيتأثر فقط بالأيام (rentalDays) ومكايتضاعفش بالقطعة ──
   const gearSubtotal = cartItems.reduce((sum, item) => {
     const pricePerDay = Number(item.price_per_day) || 0; 
+    // الثمن ديال المادة مضروب في الأيام بوحدها (بغيتي الثمن يكون ثابت 150 للكل، كتقدر ديرها هنا)
     return sum + (pricePerDay * rentalDays);
   }, 0);
 
@@ -132,12 +135,8 @@ export default function EquipmentRentalPanier() {
       setLoading(false);
     } 
   };
-
-  const insuranceFee =
-    insuranceSelected && cartItems.length > 0 ? 25 * rentalDays : 0;
-
   const totalAmount = Number(
-    (guideServicePrice + gearSubtotal + insuranceFee).toFixed(2),
+    (guideServicePrice + gearSubtotal).toFixed(2),
   );
 
   return (
@@ -325,18 +324,7 @@ export default function EquipmentRentalPanier() {
                 {guideServicePrice} MAD
               </span>
             </div>
-            <div className="flex justify-between">
-              <span>Equipment Rental ({rentalDays} Days):</span>
-              <span className="font-bold text-stone-900">
-                {gearSubtotal.toFixed(2)} MAD
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span>Protection Fee:</span>
-              <span className="font-bold text-stone-900">
-                {insuranceFee} MAD
-              </span>
-            </div>
+
           </div>
 
           <div className="border-t border-emerald-200 pt-4 flex items-center justify-between">
