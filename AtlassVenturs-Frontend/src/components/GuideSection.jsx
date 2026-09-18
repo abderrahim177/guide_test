@@ -1,47 +1,50 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MapPin, Languages, Star, CheckCircle2, ArrowRight } from 'lucide-react';
+import axios from 'axios';
 
-const guidesData = [
-  {
-    id: 1,
-    name: 'Youssef Ait Lahcen',
-    role: 'High-Mountain Guide',
-    location: 'Ait Bouguemez',
-    languages: 'Arabic · French · English',
-    rating: 4.9,
-    reviews: 38,
-    image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80',
-  },
-  {
-    id: 2,
-    name: 'Nadia El Fassi',
-    role: 'Cultural Trek Leader',
-    location: 'Ouzoud · Demnate',
-    languages: 'Arabic · French · Spanish',
-    rating: 5.0,
-    reviews: 24,
-    image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80',
-  },
-  {
-    id: 3,
-    name: 'Omar Toudite',
-    role: 'Trail & Canyon Specialist',
-    location: 'Cathedral Rock',
-    languages: 'Tamazight · French · English',
-    rating: 4.8,
-    reviews: 51,
-    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80',
-  },
+const staticImages = [
+  'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80',
 ];
 
 export default function GuidesSection() {
+  const [data, setdata] = useState([]);
+  const [error, seterror] = useState('');
+  const [loading, setloading] = useState(false);
   const navigate = useNavigate();
+
+  const GetGuides = async () => {
+    setloading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get('http://127.0.0.1:8000/api/guides', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+      const result = response.data.guides || [];
+      setdata(result);
+      console.log(result);
+    } catch (err) {
+      console.error(err);
+      seterror('impossible de charger data !');
+    } finally {
+      setloading(false);
+    }
+  };
+
+  useEffect(() => {
+    GetGuides();
+  }, []);
 
   const handleGuideClick = (guide) => {
     navigate(`/guides/${guide.id}`, { state: { guideData: guide } });
+    localStorage.setItem('selectedGuideId', guide.user_id); 
   };
-
   return (
     <section className="w-full max-w-6xl mx-auto px-4 py-10 font-['Poppins',sans-serif] bg-[#FAF8F5]">
       {/* Top Header Section */}
@@ -68,81 +71,80 @@ export default function GuidesSection() {
         </button>
       </div>
 
+      {/* Loading & Error States */}
+      {loading && <p className="text-center text-stone-500 py-6">Loading guides...</p>}
+      {error && <p className="text-center text-red-500 py-6">{error}</p>}
+
       {/* Guides Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {guidesData.map((guide) => (
-          <div
-            key={guide.id}
-            className="bg-white rounded-2xl border border-stone-200/90 overflow-hidden shadow-xs flex flex-col justify-between"
-          >
-            <div 
-              onClick={() => handleGuideClick(guide)}
-              className="w-full h-64 bg-stone-100 overflow-hidden cursor-pointer group relative"
+        {data.map((item, index) => {
+          const staticImage = staticImages[index % staticImages.length];
+          return (
+            <div
+              key={item.id}
+              className="bg-white rounded-2xl border border-stone-200/90 overflow-hidden shadow-xs flex flex-col justify-between"
             >
-              <img
-                src={guide.image}
-                alt={guide.name}
-                className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
-              />
-              <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold">
-                
-              </div>
-            </div>
-
-            {/* Details Section */}
-            <div className="p-5 flex-1 flex flex-col justify-between">
-              <div>
-                {/* Header: Name + Verified Check */}
-                <div className="flex items-center justify-between mb-0.5">
-                  <h3 
-                    onClick={() => handleGuideClick(guide)}
-                    className="text-base font-bold text-[#1E3A2B] tracking-tight cursor-pointer hover:underline"
-                  >
-                    {guide.name}
-                  </h3>
-                  <CheckCircle2 className="w-4 h-4 text-[#0284C7] fill-[#0284C7]/10 stroke-[2]" />
-                </div>
-
-                {/* Role */}
-                <p className="text-xs text-stone-400 mb-4">
-                  {guide.role}
-                </p>
-
-                {/* Location & Languages */}
-                <div className="space-y-2 text-xs text-[#C86D44]">
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-3.5 h-3.5 shrink-0" />
-                    <span className="text-stone-700">{guide.location}</span>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <Languages className="w-3.5 h-3.5 shrink-0" />
-                    <span className="text-stone-700">{guide.languages}</span>
-                  </div>
-                </div>
+              <div 
+                onClick={() => handleGuideClick(item)}
+                className="w-full h-64 bg-stone-100 overflow-hidden cursor-pointer group relative"
+              >
+                <img
+                  src={staticImage}
+                  alt={item.guide?.id}
+                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
+                />
               </div>
 
-              {/* Footer: Rating & Action */}
-              <div className="mt-6 pt-4 border-t border-stone-100 flex items-center justify-between text-xs">
-                <div className="flex items-center gap-1.5 font-bold text-stone-900">
-                  <Star className="w-4 h-4 text-[#C86D44] fill-[#C86D44]" />
-                  <span>
-                    {guide.rating.toFixed(1)}{' '}
-                    <span className="text-stone-400 font-normal">({guide.reviews})</span>
+              {/* Details Section */}
+              <div className="p-5 flex-1 flex flex-col justify-between">
+                <div>
+                  {/* Header: Name + Verified Check */}
+                  <div className="flex items-center justify-between mb-0.5">
+                    <h3 
+                      onClick={() => handleGuideClick(item)}
+                      className="text-base font-bold text-[#1E3A2B] tracking-tight cursor-pointer hover:underline"
+                    >
+                      {item.guide?.name}
+                    </h3>
+                    <CheckCircle2 className="w-4 h-4 text-[#0284C7] fill-[#0284C7]/10 stroke-[2]" />
+                  </div>
+
+                  {/* Role / Activity Name */}
+                  <p className="text-xs text-stone-400 mb-4 capitalize">
+                    {item.activity?.name ? `${item.activity.name} Specialist` : 'Mountain Guide'}
+                  </p>
+
+                  {/* Location & Languages */}
+                  <div className="space-y-2 text-xs text-[#C86D44]">
+                    <div className="flex items-center gap-2">
+                      <MapPin className="w-3.5 h-3.5 shrink-0" />
+                      <span className="text-stone-700 capitalize">{item.region?.name}</span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <Languages className="w-3.5 h-3.5 shrink-0" />
+                      <span className="text-stone-700">Arabic · French · English</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Footer: Price & Rating */}
+                <div className="mt-6 pt-4 border-t border-stone-100 flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-1.5 font-bold text-stone-900">
+                    <Star className="w-4 h-4 text-[#C86D44] fill-[#C86D44]" />
+                    <span>
+                      4.9 <span className="text-stone-400 font-normal">(38)</span>
+                    </span>
+                  </div>
+
+                  <span className="font-bold text-[#1E3A2B]">
+                    {item.price_per_day} MAD / day
                   </span>
                 </div>
-
-                {/* زر View Profile كيديك للصفحة */}
-                <button
-                  type="button"
-                  onClick={() => handleGuideClick(guide)}
-                  className="text-[#1E3A2B] font-bold hover:underline cursor-pointer bg-transparent border-none p-0"
-                >
-                </button>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </section>
   );

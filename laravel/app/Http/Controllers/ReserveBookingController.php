@@ -20,6 +20,7 @@ class ReserveBookingController extends Controller
             'end_date'         => 'required|date|after_or_equal:start_date',
             'total_price'      => 'required|numeric',
             'client_phone'     => 'required|string',
+            'client_name'      => 'required|string'
         ]);
 
         try {
