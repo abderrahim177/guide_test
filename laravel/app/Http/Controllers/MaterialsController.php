@@ -60,8 +60,7 @@ class MaterialsController extends Controller
         }
     }
 
-    public function getmaterials(Request $request)
-    {
+    public function getmaterials(Request $request){
         $Equipments = GuideEquipment::with(['equipment', 'guide'])->get();
         return response()->json($Equipments, 200);
     }

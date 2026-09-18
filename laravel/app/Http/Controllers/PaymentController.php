@@ -13,7 +13,6 @@ class PaymentController extends Controller
         ->where('user_id', Auth::id())
         ->latest()
         ->first();
-
     if (!$PaymentInfo) {
         return response()->json(['message' => 'No active orders found'], 404);
     }

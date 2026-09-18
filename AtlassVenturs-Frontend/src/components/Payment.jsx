@@ -20,7 +20,6 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // جلب البيانات من الـ API
   const handelFetchData = async () => {
     const token = localStorage.getItem("token");
     

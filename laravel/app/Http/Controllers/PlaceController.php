@@ -19,16 +19,4 @@ class PlaceController extends Controller
             'locations' => $locations
         ], 200);
     }
-
-    // 2. Djib details d waḥed l-region m'a les programs, activities o guides
-    public function details_places($id)
-    {
-        $region = Region::with(['programs.activity', 'programs.guide'])
-            ->findOrFail($id);
-
-        return response()->json([
-            'status' => 'success',
-            'region' => $region
-        ], 200);
-    }
 }

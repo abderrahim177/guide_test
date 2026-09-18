@@ -8,7 +8,7 @@ import {
   Bell,
   Info,
   CreditCard,
-  Loader2, // <-- تم إضافة Loader2 هنا بنجاح
+  Loader2,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
