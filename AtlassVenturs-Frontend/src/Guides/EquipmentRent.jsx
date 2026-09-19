@@ -55,7 +55,6 @@ export default function EquipmentRent() {
       console.error('Error fetching equipment:', err);
     }
   };
-
   useEffect(() => {
     fetchEquipment();
     fetchActivities();
@@ -139,13 +138,13 @@ export default function EquipmentRent() {
             {items.length > 0 ? (
               items.map((item, idx) => {
                 const pivot = item.guides?.[0]?.pivot || {};
-                const price = item.price || pivot.price_per_day || 0;
+                const price = item.price_per_day || pivot.price_per_day || 0;
                 const stock = item.stock || pivot.stock || 0;
 
                 return (
                   <tr key={item.id || idx} className="hover:bg-slate-50/60 transition-colors">
-                    <td className="p-3.5 font-bold text-slate-900">{item.name}</td>
-                    <td className="p-3.5 text-slate-500 max-w-xs truncate">{item.description || '—'}</td>
+                    <td className="p-3.5 font-bold text-slate-900">{item.equipment?.name}</td>
+                    <td className="p-3.5 text-slate-500 max-w-xs truncate">{item.equipment?.description || '—'}</td>
                     <td className="p-3.5 text-slate-700 font-semibold">${price}/day</td>
                     <td className="p-3.5 text-slate-800">{stock}</td>
                     <td className="p-3.5">

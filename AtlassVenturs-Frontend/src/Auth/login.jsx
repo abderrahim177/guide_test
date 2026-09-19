@@ -25,12 +25,13 @@ export default function LoginPage() {
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/login",
+        "http://127.0.0.1:8000/api/login",
         {
           email: formData.email,
           password: formData.password,
         },
         {
+          withCredentials: true,
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
@@ -128,7 +129,7 @@ export default function LoginPage() {
                 Ravi de vous revoir ! Connectez-vous à votre compte.
               </p>
             </div>
-
+            {error && <p>{error}</p>}
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Email Field */}
