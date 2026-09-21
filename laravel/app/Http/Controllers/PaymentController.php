@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Order;
+use App\Models\Booking;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class PaymentController extends Controller
 {
     public function index(Request $request){
-    $PaymentInfo = Order::with(['client', 'guide'])
+    $PaymentInfo = Booking::with(['client' , 'program.guide'])
         ->where('user_id', Auth::id())
         ->latest()
         ->first();
