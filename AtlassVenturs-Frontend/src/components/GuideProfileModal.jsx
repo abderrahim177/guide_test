@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
-import { useNavigate, useLocation, useParams } from "react-router-dom";
+import React, { useState, useRef } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   MapPin,
   Languages,
@@ -11,7 +11,6 @@ import {
   CheckCircle2,
   MessageCircle,
   CreditCard,
-  PackageCheck,
   ChevronDown,
 } from "lucide-react";
 import axios from "axios";
@@ -21,10 +20,8 @@ export default function GuideProfilePage() {
   const location = useLocation();
 
   const passedGuideData = location.state?.guideData;
-  const [guideData, setGuideData] = useState(passedGuideData || null);
-  const [loadingGuide, setLoadingGuide] = useState(!passedGuideData);
-
- 
+  const [guideData] = useState(passedGuideData || null);
+  const [loadingGuide] = useState(!passedGuideData);
 
   const guide = {
     id: guideData?.id,
@@ -45,22 +42,19 @@ export default function GuideProfilePage() {
   // Booking Form States
   const [startDate, setStartDate] = useState(todayStr);
   const [endDate, setEndDate] = useState(todayStr);
-  const [includeGear, setIncludeGear] = useState(false);
 
   // Interactive UI States
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [step, setStep] = useState("checkout");
   const [paymentMethod, setPaymentMethod] = useState("deposit");
-  const [userNeedsGear, setUserNeedsGear] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [formadata, setFormadata] = useState({
-    name: "",
     phone: "",
   });
   const cardRef = useRef(null);
 
-  // Calculations
+  // Calculations (Simple days * base price)
   const calculateDays = () => {
     if (!startDate || !endDate) return 1;
     const start = new Date(startDate);
@@ -71,12 +65,9 @@ export default function GuideProfilePage() {
   };
 
   const selectedDays = calculateDays();
-    const basePricePerDay = Number(guideData?.price_per_day) || 350;
-    const gearPricePerDay = 150;
+  const basePricePerDay = Number(guideData?.price_per_day) || 350;
 
-  const currentGearStatus = isCheckoutOpen ? userNeedsGear : includeGear;
-  
-  const totalPrice = Number(((basePricePerDay + (currentGearStatus ? gearPricePerDay : 0)) * selectedDays).toFixed(2));
+  const totalPrice = Number((basePricePerDay * selectedDays).toFixed(2));
   const depositAmount = Math.round(totalPrice * 0.2);
 
   // Handlers
@@ -98,7 +89,6 @@ export default function GuideProfilePage() {
 
   const handleToggleCheckout = () => {
     if (!isCheckoutOpen) {
-      setUserNeedsGear(includeGear);
       setIsCheckoutOpen(true);
       setTimeout(() => {
         cardRef.current?.scrollIntoView({
@@ -121,7 +111,6 @@ export default function GuideProfilePage() {
       start_date: startDate,
       end_date: endDate,
       total_price: totalPrice,
-      client_name: formadata.name,
       client_phone: formadata.phone.replace(/\D/g, ""),
     };
 
@@ -229,7 +218,7 @@ export default function GuideProfilePage() {
               </div>
             </div>
             {/* Inputs Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Start Date */}
               <div className="space-y-1.5 bg-white p-3.5 rounded-2xl border border-emerald-200/80 shadow-xs hover:border-emerald-500 transition-colors">
                 <label className="text-xs font-bold text-stone-800 flex items-center gap-1.5">
@@ -257,34 +246,6 @@ export default function GuideProfilePage() {
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
                   className="w-full text-xs font-semibold text-stone-900 bg-stone-50 p-2.5 rounded-xl border border-stone-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white cursor-pointer"
-                />
-              </div>
-
-              {/* Gear Rental Switch */}
-              <div className="bg-white p-3.5 rounded-2xl border border-emerald-200/80 shadow-xs flex items-start justify-between gap-3 hover:border-emerald-500 transition-colors">
-                <div className="space-y-1">
-                  <label
-                    htmlFor="gear-light"
-                    className="cursor-pointer font-bold text-xs text-stone-900 block"
-                  >
-                    Gear Rental{" "}
-                    <span className="text-emerald-600 font-semibold">
-                      (+150 MAD/day)
-                    </span>
-                  </label>
-                  <p className="text-[11px] text-stone-500 leading-snug">
-                    Includes backpack, tent, sleeping bag & poles.
-                  </p>
-                </div>
-                <input
-                  type="checkbox"
-                  id="gear-light"
-                  checked={isCheckoutOpen ? userNeedsGear : includeGear}
-                  onChange={(e) => {
-                    setIncludeGear(e.target.checked);
-                    setUserNeedsGear(e.target.checked);
-                  }}
-                  className="mt-0.5 h-5 w-5 rounded border-stone-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer shrink-0"
                 />
               </div>
             </div>
@@ -358,35 +319,6 @@ export default function GuideProfilePage() {
               <div className="p-6 sm:p-8 space-y-6">
                 {step === "checkout" ? (
                   <div className="space-y-6">
-                    {/* <div className="bg-white p-4 rounded-2xl border border-emerald-200/80 text-xs grid grid-cols-1 sm:grid-cols-3 gap-4 shadow-2xs">
-                      <div>
-                        <span className="text-stone-500 block font-medium">
-                          Dates & Duration:
-                        </span>
-                        <span className="font-bold text-stone-900">
-                          {startDate} → {endDate} ({selectedDays} Days)
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-stone-500 block font-medium">
-                          Technical Gear:
-                        </span>
-                        <span className="font-bold text-stone-900">
-                          {userNeedsGear
-                            ? "Rented (+150 MAD/day)"
-                            : "Self Provided"}
-                        </span>
-                      </div>
-                      <div className="sm:text-right border-t sm:border-t-0 sm:border-l border-emerald-200/80 pt-2 sm:pt-0 sm:pl-4">
-                        <span className="text-stone-500 block font-medium">
-                          Total Amount:
-                        </span>
-                        <span className="font-black text-base text-emerald-700">
-                          {totalPrice} MAD
-                        </span>
-                      </div>
-                    </div> */}
-
                     {error && typeof error === "object" && (
                       <div className="bg-red-50 border border-red-200 text-red-700 p-3 rounded-xl text-xs space-y-1">
                         {Object.entries(error).map(([field, messages]) => (
@@ -399,33 +331,18 @@ export default function GuideProfilePage() {
                       onSubmit={handleBookingSubmit}
                       className="space-y-5 text-xs"
                     >
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block font-bold text-stone-700 mb-1.5">
-                            Full Name
-                          </label>
-                          <input
-                            name="name"
-                            value={formadata.name}
-                            onChange={handleInputChange}
-                            type="text"
-                            placeholder="e.g. Yassine El Amrani"
-                            className="w-full p-3 bg-white border border-emerald-200/90 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
-                          />
-                        </div>
-                        <div>
-                          <label className="block font-bold text-stone-700 mb-1.5">
-                            Phone / WhatsApp
-                          </label>
-                          <input
-                            name="phone"
-                            value={formadata.phone}
-                            onChange={handleInputChange}
-                            type="tel"
-                            placeholder="+212 600 000 000"
-                            className="w-full p-3 bg-white border border-emerald-200/90 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
-                          />
-                        </div>
+                      <div>
+                        <label className="block font-bold text-stone-700 mb-1.5">
+                          Phone / WhatsApp
+                        </label>
+                        <input
+                          name="phone"
+                          value={formadata.phone}
+                          onChange={handleInputChange}
+                          type="tel"
+                          placeholder="+212 600 000 000"
+                          className="w-full p-3 bg-white border border-emerald-200/90 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
+                        />
                       </div>
 
                       <div className="space-y-3 pt-2">
@@ -536,89 +453,24 @@ export default function GuideProfilePage() {
                       <span>Contact {guide.name} on WhatsApp Now</span>
                     </a>
 
-                    <div className="border-t border-emerald-200/80 pt-5 text-left space-y-3">
-                      <h4 className="text-xs font-bold text-stone-900 uppercase tracking-wider flex items-center gap-2">
-                        <PackageCheck className="w-4 h-4 text-emerald-700" />{" "}
-                        Essential Trekking Checklist
-                      </h4>
-
-                      <div className="bg-white p-4 rounded-2xl border border-emerald-200/80 text-xs space-y-3 shadow-2xs">
-                        <div>
-                          <span className="font-bold text-stone-800 block mb-1">
-                            Personal Essentials (Bring Yourself):
-                          </span>
-                          <ul className="list-disc list-inside text-stone-600 space-y-1 pl-1">
-                            <li>Sturdy hiking boots & wool socks</li>
-                            <li>
-                              Thermal base layers and wind/waterproof jacket
-                            </li>
-                            <li>Sun protection (Sunglasses, Sunscreen, Cap)</li>
-                          </ul>
-                        </div>
-
-                        <div className="border-t border-emerald-100 pt-2.5">
-                          <span className="font-bold text-stone-800 block mb-1">
-                            Technical Gear Status:
-                          </span>
-                          <p className="text-stone-600 mb-2">
-                            {userNeedsGear
-                              ? "✓ You rented technical gear. Tents, sleeping bags & trekking poles will be provided by the guide."
-                              : "You chose to bring your own technical gear."}
-                          </p>
-                          {!userNeedsGear && (
-                            <button
-                              type="button"
-                              onClick={() => setUserNeedsGear(true)}
-                              className="bg-emerald-900 text-white text-[11px] font-bold px-3.5 py-2 rounded-xl hover:bg-emerald-950 transition-colors cursor-pointer"
-                            >
-                              Add Technical Gear (+150 MAD/day)
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    {userNeedsGear && (
-                      <button
-                        type="button"
-                        onClick={() =>
-                          navigate("/Required-Gear", {
-                            state: {
-                              guideData: guide,
-                              bookingDetails: {
-                                startDate,
-                                endDate,
-                                totalPrice,
-                              },
+                    <button
+                      type="button"
+                      onClick={() =>
+                        navigate("/request-pending", {
+                          state: {
+                            guideData: guide,
+                            bookingDetails: {
+                              startDate,
+                              endDate,
+                              totalPrice,
                             },
-                          })
-                        }
-                        className="w-full py-3 bg-green-400 hover:bg-green-300 text-stone-800 border border-emerald-200/80 rounded-xl text-xs font-bold transition-colors cursor-pointer"
-                      >
-                        View Required Gear
-                      </button>
-                    )}
-
-                    {!userNeedsGear && (
-                      <button
-                        type="button"
-                        onClick={() =>
-                          navigate("/request-pending", {
-                            state: {
-                              guideData: guide,
-                              bookingDetails: {
-                                startDate,
-                                endDate,
-                                totalPrice,
-                              },
-                            },
-                          })
-                        }
-                        className="w-full py-3 bg-green-400 hover:bg-green-300 text-stone-800 border border-emerald-200/80 rounded-xl text-xs font-bold transition-colors cursor-pointer"
-                      >
-                        Get payment
-                      </button>
-                    )}
+                          },
+                        })
+                      }
+                      className="w-full py-3 bg-green-400 hover:bg-green-300 text-stone-800 border border-emerald-200/80 rounded-xl text-xs font-bold transition-colors cursor-pointer"
+                    >
+                      Get payment
+                    </button>
                   </div>
                 )}
               </div>
@@ -663,7 +515,7 @@ export default function GuideProfilePage() {
                 </ul>
               </div>
 
-              <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-2xs space-y-4 ">
+              <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-2xs space-y-4">
                 <h4 className="text-sm font-bold text-stone-900 flex items-center gap-2">
                   <MapPin className="w-4 h-4 text-stone-700" /> Covered Regions
                 </h4>
