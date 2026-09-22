@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreatEquipmentsRequest;
 use App\Models\Equipment;
+use App\Models\GuideEquipment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -29,10 +30,7 @@ class CreatEquipmentsController extends Controller
 
     public function GetEquipments(Request $request)
     {
-        $equipments = Equipment::with(['guides' => function ($query) {
-            $query->where('user_id', Auth::id());
-        }])->get();
-
+        $equipments = GuideEquipment::with(['guide' , 'equipment'])->where('user_id' , Auth::id())->get();
         return response()->json($equipments, 200);
     }
 }

@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
 
@@ -17,11 +18,27 @@ import EquipmentRent from './Guides/EquipmentRent';
 import GuideCalendar from './Guides/GuideCalendar';
 import GuideSettings from './Guides/GuideSettings';
 import PlatformTrustSection from './components/PlatformTrustSection';
-import Panier from './components/Panier'
-import Payment from './components/Payment'
-import InconfirmedBooking from './Guides/InconfirmedBooking'
+import Payment from './components/Payment';
+import InconfirmedBooking from './Guides/InconfirmedBooking';
 import PendingRequestPage from './components/request-pending';
+
+import Loader from './Loader';
+
 function App() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500); 
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return <Loader />;
+  }
+
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
@@ -36,7 +53,6 @@ function App() {
           </>
         } />
         <Route path="/guides/:id" element={<GuideProfilePage />} />
-        <Route path="/Required-Gear" element={<Panier />} />
         <Route path="/Payment" element={<Payment />} />
         <Route path="/request-pending" element={<PendingRequestPage />} />
       </Route>

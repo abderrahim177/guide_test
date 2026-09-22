@@ -21,7 +21,7 @@ class UpdateStatusController extends Controller
         ]);
         $booking->save();
         return response()->json([
-            'message' => 'Booking status updated successfully',
+            'message' => ' Booking status Confermer by guide successfully you can now continue your reservation !',
             'data'    => $booking
         ], 200);
     }
@@ -38,7 +38,7 @@ class UpdateStatusController extends Controller
         ]);
 
         return response()->json([
-            'message' => 'Booking status rejected successfully',
+            'message' => 'Booking status rejected by guide thank you for your visit !',
             'data'    => $refuseBooking
         ], 200);
     }

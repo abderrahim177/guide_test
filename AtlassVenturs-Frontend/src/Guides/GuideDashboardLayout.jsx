@@ -59,7 +59,7 @@ export default function GuideDashboardLayout() {
               <Compass className="w-4 h-4" />
             </div>
             <span className="text-sm font-bold text-slate-900 tracking-tight">
-              Eco<span className="text-emerald-700">Tour</span>{" "}
+              Atlas<span className="text-emerald-700">Venture</span>{" "}
               <span className="text-[10px] text-slate-400 font-normal ml-1">
                 | Guide Portal
               </span>

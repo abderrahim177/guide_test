@@ -19,8 +19,6 @@ export default function CheckoutPage() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
-  // جلب البيانات من الـ API
   const handelFetchData = async () => {
     const token = localStorage.getItem("token");
     
@@ -51,7 +49,6 @@ export default function CheckoutPage() {
     handelFetchData();
   }, []);
 
-  // استخراج الثمن والموعد والمعلومات مباشرة من API data
   const totalAmount = paymentData?.total_price || 250;
 
   const bookingDetails = {
@@ -64,9 +61,8 @@ export default function CheckoutPage() {
     location: paymentData?.guide_program?.region?.name || "Azilal Region",
     startDate: paymentData?.start_date || new Date().toISOString().split("T")[0],
     guideFee: totalAmount,
-    guideName: paymentData?.guide?.name || "Local Guide",
+    guideName: paymentData?.program.guide.name || "Local Guide",
   };
-
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsSubmitted(true);
