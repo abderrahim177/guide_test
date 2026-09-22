@@ -15,6 +15,7 @@ use App\Http\Controllers\UpdateStatusController;
 use App\Http\Controllers\getGuideBookingsController;
 use App\Http\Controllers\GetInconfirmedBookingController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ProfileController;
 
 // 1. Authentication (Register & Login)
 Route::post('/register', [AuthController::class, 'save']);
@@ -44,7 +45,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('/bookingsRefuse/{id}/status', [UpdateStatusController::class, 'refuser']);
         Route::get('/ConfirmedBooking' , [ConfirmedBookingsController::class , 'ConfirmedBooking']);  
         Route::get('/getGuideBookings' , [getGuideBookingsController::class , 'getGuideBookings']); 
-        Route::get('/Inconfirmed_Booking' , [GetInconfirmedBookingController::class , 'index']); 
+        Route::get('/Inconfirmed_Booking' , [GetInconfirmedBookingController::class , 'index']);
+        Route::post('/AddCertificat' , [ProfileController::class , 'AddCertificat']); 
+        Route::get('/GetAllCertificates' , [ProfileController::class , 'GetCertificates']);
     }); 
     Route::post('/logout', [AuthController::class, 'logout']);
 });

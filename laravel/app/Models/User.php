@@ -49,28 +49,29 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-    // العلاقة مع الـ Role (كل مستخدم عنده دور واحد)
     public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class);
     }
 
-    // العلاقة مع البرامج (المرشد عنده بزاف ديال البرامج)
     public function programs(): HasMany
     {
-        // حددنا السميّة ديال الجدول 'guide_programe' حيت عندك بالمفرد
         return $this->hasMany(GuideProgram::class, 'user_id');
     }
 
-    // العلاقة مع الحجوزات (السائح يقدر يدير بزاف ديال الحجوزات)
     public function bookings(): HasMany
     {
         return $this->hasMany(Booking::class, 'user_id');
     }
     public function rentalEquipments()
-{
+    {
     return $this->belongsToMany(Equipment::class, 'guide_equipment', 'user_id', 'equipment_id')
-                ->withPivot('price_per_day', 'stock') // باش تقدر تقرا الثمن والكمية
+                ->withPivot('price_per_day', 'stock') 
                 ->withTimestamps();
-}
+    }
+    
+    public function certifications()
+    {
+    return $this->hasMany(Certification::class);
+    }
 }
