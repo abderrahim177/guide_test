@@ -43,7 +43,6 @@ export default function GuidesSection() {
 
   const handleGuideClick = (guide) => {
     navigate(`/guides/${guide.id}`, { state: { guideData: guide } });
-    localStorage.setItem('selectedGuideId', guide.user_id); 
   };
   return (
     <section className="w-full max-w-6xl mx-auto px-4 py-10 font-['Poppins',sans-serif] bg-[#FAF8F5]">

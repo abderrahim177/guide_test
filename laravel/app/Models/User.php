@@ -69,9 +69,13 @@ class User extends Authenticatable
                 ->withPivot('price_per_day', 'stock') 
                 ->withTimestamps();
     }
-    
+
     public function certifications()
     {
     return $this->hasMany(Certification::class);
+    }
+
+    public function notification(){
+        return $this->hasMany(Notificatiion::class);
     }
 }
