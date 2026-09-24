@@ -12,20 +12,19 @@ use Illuminate\Support\Facades\Hash;
 class AuthController extends Controller
 {
     // 1. Register (Inscription)
-    public function save(registerRequest $request) 
+    public function save(RegisterRequest $request)
     {
         $credentials = $request->validated();
-        
-        // Hash password
+
         $credentials['password'] = Hash::make($credentials['password']);
-        $credentials['role_id'] = $request->role_id ?? 3;
-        // Create user
+
         $user = User::create([
-            "name" => $credentials['name'],
-            "email" => $credentials['email'],
-            "password" => $credentials['password']
+            'name' => $credentials['name'],
+            'email' => $credentials['email'],
+            'password' => $credentials['password'],
+            'role_id' => $credentials['role_id'] ?? 1,
         ]);
-        // Kriya token f Sanctum
+
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([

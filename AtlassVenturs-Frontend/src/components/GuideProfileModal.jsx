@@ -20,6 +20,8 @@ export default function GuideProfilePage() {
   const location = useLocation();
 
   const passedGuideData = location.state?.guideData;
+  console.log(passedGuideData);
+  const guidePhone = passedGuideData.guide.phone;
   const [guideData] = useState(passedGuideData || null);
   const [loadingGuide] = useState(!passedGuideData);
 
@@ -66,7 +68,6 @@ export default function GuideProfilePage() {
 
   const selectedDays = calculateDays();
   const basePricePerDay = Number(guideData?.price_per_day) || 350;
-
   const totalPrice = Number((basePricePerDay * selectedDays).toFixed(2));
   const depositAmount = Math.round(totalPrice * 0.2);
 
@@ -442,7 +443,7 @@ export default function GuideProfilePage() {
                     </div>
 
                     <a
-                      href={`https://wa.me/212600000000?text=Hello%20${encodeURIComponent(
+                      href={`https://wa.me/${guidePhone}?text=Hello%20${encodeURIComponent(
                         guide.name,
                       )},%20I%20just%20submitted%20a%20booking%20request%20for%20${selectedDays}%20days%20(${startDate}%20to%20${endDate})!`}
                       target="_blank"

@@ -53,9 +53,58 @@ const Navbar = () => {
       setLoading(false);
     }
   };
+  
+  const [notifications, setNotifications] = useState([]);
+  const [loader, setLoader] = useState(true);
 
+  const handelFetchData = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get('http://127.0.0.1:8000/api/Notification', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      const result = Array.isArray(response.data) 
+        ? response.data 
+        : response.data.data || [];
+      
+      const formattedNotifs = result.map(n => ({
+        ...n,
+        is_read: Boolean(n.is_read) 
+      }));
+      console.log(result);
+      
+      setNotifications(formattedNotifs);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoader(false);
+    }
+  };
+  const markAllAsRead = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      
+      await axios.patch('http://127.0.0.1:8000/api/make_is_read', {}, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+        }
+      });
+
+      setNotifications(notifications.map((n) => ({ ...n, is_read: true })));
+      
+    } catch (err) {
+      console.error("Erreur lors du marquage des notifications:", err);
+    }
+  };
   useEffect(() => {
     checkBookingStatus();
+    handelFetchData();
   }, []);
 
   const handleProceedToPayment = () => {
@@ -67,23 +116,7 @@ const Navbar = () => {
     });
   };
 
-  // States dial Notifications
   const [notifOpen, setNotifOpen] = useState(false);
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      text: "Your trek booking to M'goun has been confirmed.",
-      time: "2h ago",
-      read: false,
-    },
-    {
-      id: 2,
-      text: "New local guide added in Ait Bougmez.",
-      time: "1d ago",
-      read: false,
-    },
-  ]);
-
   const dropdownRef = useRef(null);
   const notifRef = useRef(null);
 
@@ -128,11 +161,7 @@ const Navbar = () => {
     }
   };
 
-  const unreadCount = notifications.filter((n) => !n.read).length;
-
-  const markAllAsRead = () => {
-    setNotifications(notifications.map((n) => ({ ...n, read: true })));
-  };
+  const unreadCount = notifications.filter((n) => !n.is_read).length;
 
   return (
     <header className="sticky top-0 left-0 w-full bg-[#FAF9F6] text-[#111612] px-6 py-2.5 flex items-center justify-between shadow-sm z-50 border-b border-gray-200/50">
@@ -184,30 +213,28 @@ const Navbar = () => {
         >
           About Us
         </a>
-
-        {/* Loading Spinner or Payment Button */}
-
       </nav>
 
       {/* User Section / Guest Buttons */}
       {user ? (
         <div className="flex items-center gap-3">
           {loading ? (
-          <div className="flex items-center gap-2 px-3 py-1.5 text-xs text-stone-500 bg-stone-100 rounded-xl border border-stone-200">
-            <Loader2 className="w-4 h-4 animate-spin text-[#1C3A27]" />
-            <span>Vérification...</span>
-          </div>
-        ) : (
-          isApproved && (
-            <button
-              onClick={handleProceedToPayment}
-              className="bg-green-500 hover:bg-green-400 text-stone-900 px-3 py-1.5 rounded-xl text-xs font-bold shadow-md cursor-pointer flex items-center gap-2 border border-emerald-300"
-            >
-              <CreditCard className="w-4 h-4" />
-              <span>Procéder au Paiement</span>
-            </button>
-          )
-        )}
+            <div className="flex items-center gap-2 px-3 py-1.5 text-xs text-stone-500 bg-stone-100 rounded-xl border border-stone-200">
+              <Loader2 className="w-4 h-4 animate-spin text-[#1C3A27]" />
+              <span>Vérification...</span>
+            </div>
+          ) : (
+            isApproved && (
+              <button
+                onClick={handleProceedToPayment}
+                className="bg-green-500 hover:bg-green-400 text-stone-900 px-3 py-1.5 rounded-xl text-xs font-bold shadow-md cursor-pointer flex items-center gap-2 border border-emerald-300"
+              >
+                <CreditCard className="w-4 h-4" />
+                <span>Procéder au Paiement</span>
+              </button>
+            )
+          )}
+
           {/* Notification Bell Component */}
           <div className="relative" ref={notifRef}>
             <button
@@ -216,7 +243,7 @@ const Navbar = () => {
             >
               <Bell className="w-5 h-5 text-gray-600" />
               {unreadCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white ring-2 ring-[#FAF9F6]">
+                <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold text-white ring-2 ring-[#FAF9F6]">
                   {unreadCount}
                 </span>
               )}
@@ -240,7 +267,11 @@ const Navbar = () => {
                 </div>
 
                 <div className="max-h-64 overflow-y-auto divide-y divide-slate-50">
-                  {notifications.length === 0 ? (
+                  {loader ? (
+                    <div className="py-8 text-center flex justify-center items-center">
+                      <Loader2 className="w-5 h-5 animate-spin text-[#1C3A27]" />
+                    </div>
+                  ) : notifications.length === 0 ? (
                     <div className="py-8 text-center">
                       <p className="text-xs text-slate-400">
                         Aucune notification pour le moment
@@ -250,17 +281,19 @@ const Navbar = () => {
                     notifications.map((notif) => (
                       <div
                         key={notif.id}
-                        className={`px-4 py-2.5 transition-colors flex gap-2.5 items-start ${!notif.read ? "bg-emerald-50/40" : "hover:bg-slate-50"}`}
+                        className={`px-4 py-2.5 transition-colors flex gap-2.5 items-start ${
+                          !notif.read ? "bg-emerald-50/40" : "hover:bg-slate-50"
+                        }`}
                       >
                         <div className="p-1.5 bg-emerald-100/60 text-[#1C3A27] rounded-full shrink-0 mt-0.5">
                           <Info className="w-3 h-3" />
                         </div>
                         <div className="flex-1">
                           <p className="text-xs text-slate-700 leading-snug">
-                            {notif.text}
+                            {notif.message}
                           </p>
                           <span className="text-[10px] text-slate-400 mt-1 block">
-                            {notif.time}
+                            {new Date(notif.created_at).toLocaleString()}
                           </span>
                         </div>
                       </div>
@@ -281,7 +314,9 @@ const Navbar = () => {
                 {user.name ? user.name.charAt(0) : "U"}
               </div>
               <ChevronDown
-                className={`w-3.5 h-3.5 text-gray-600 transition-transform duration-200 ${dropdownOpen ? "rotate-180" : ""}`}
+                className={`w-3.5 h-3.5 text-gray-600 transition-transform duration-200 ${
+                  dropdownOpen ? "rotate-180" : ""
+                }`}
               />
             </button>
 

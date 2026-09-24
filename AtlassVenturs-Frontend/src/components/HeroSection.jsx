@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   MapPin,
   Search,
@@ -11,20 +12,18 @@ import {
 import axios from "axios";
 
 const HeroSection = () => {
-  const [selectedLocation, setSelectedLocation] = useState("");
-  const [selectedActivity, setSelectedActivity] = useState("");
   const [data, setdata] = useState([]);
   const [loading, setloading] = useState(false);
   const [error, seterror] = useState(false);
   const [places, setPlaces] = useState([]);
   const [locations, setLocations] = useState([]);
   const [activity, setactivity] = useState([]);
-
+  const navigate = useNavigate();
   const fetchInitialData = async () => {
     setloading(true);
     const token = localStorage.getItem("token");
     try {
-      const response = await axios.get("http://localhost:8000/api/places", {
+      const response = await axios.get("http://127.0.0.1:8000/api/places", {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: "application/json",
@@ -45,7 +44,7 @@ const HeroSection = () => {
     setloading(true);
     const token = localStorage.getItem("token");
     try {
-      const res = await axios.get("http://localhost:8000/api/Activities", {
+      const res = await axios.get("http://127.0.0.1:8000/api/Activities", {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: "application/json",
@@ -67,13 +66,32 @@ const HeroSection = () => {
     getAllActivities();
   }, []);
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    console.log("Searching for:", {
-      location: selectedLocation,
-      activity: selectedActivity,
-    });
-  };
+  const [params, setParams] = useSearchParams()
+
+  function setSelectedLocation(location){
+    
+    setParams(prev=> {
+
+      if(!location) {
+        prev.delete('location')
+        return prev
+      }
+        prev.set('location', location)
+      return prev
+    })
+  }
+  function selectedactivity (activity) {
+   
+    setParams(prev => {
+    if(!activity){
+      prev.delete("activity")
+      return prev
+    }
+      prev.set('activity', activity)
+      return prev
+    })
+  }
+
 
   const handleScrollDown = () => {
     const guidesSection = document.getElementById("guides");
@@ -111,7 +129,7 @@ const HeroSection = () => {
           </p>
 
           {/* SEARCH FILTER BAR */}
-          <form onSubmit={handleSearch} className="pt-4">
+          <form  className="pt-4">
             <div className="bg-[#FAF9F6] text-gray-800 p-1.5 md:p-2 rounded-xl md:rounded-full shadow-2xl max-w-xl mx-auto flex flex-col md:flex-row items-center gap-1 border border-white/20">
               {/* Location Select */}
               <div className="flex-1 w-full flex items-center gap-2 px-3 py-1.5 border-b md:border-b-0 md:border-r border-gray-200/80">
@@ -121,15 +139,16 @@ const HeroSection = () => {
                     Location
                   </label>
                   <select
-                    value={selectedLocation}
-                    onChange={(e) => setSelectedLocation(e.target.value)}
+                    value={params.get('location')}
+                    onChange={(e) => setSelectedLocation(e.target.value??'all')}
                     className="w-full bg-transparent text-xs font-semibold text-gray-800 outline-none cursor-pointer appearance-none pr-4"
                   >
                     <option value="">
                       {loading ? "Chargement..." : "Select a location"}
                     </option>
+           
                     {locations.map((loc) => (
-                      <option key={loc.id} value={loc.id}>
+                      <option key={loc.id} value={loc.name}>
                         {loc.name}
                       </option>
                     ))}
@@ -146,15 +165,16 @@ const HeroSection = () => {
                     Activity
                   </label>
                   <select
-                    value={selectedActivity}
-                    onChange={(e) => setSelectedActivity(e.target.value)}
+                    value={params.get("activity")}
+                    onChange={(e) => selectedactivity(e.target.value)}
                     className="w-full bg-transparent text-xs font-semibold text-gray-800 outline-none cursor-pointer appearance-none pr-4"
                   >
                     <option value="">
                       {loading ? "Chargement..." : "Select an activity"}
                     </option>
+
                     {places.map((place) => (
-                      <option key={place.id} value={place.id}>
+                      <option key={place.id} value={place.name}>
                         {place.name}
                       </option>
                     ))}
@@ -165,11 +185,12 @@ const HeroSection = () => {
 
               {/* Search Button */}
               <button
-                type="submit"
+                onClick={handleScrollDown}
+                type="button"
                 className="w-full md:w-auto bg-[#1C3A27] hover:bg-[#152c1e] text-white px-5 py-2.5 rounded-lg md:rounded-full text-xs font-semibold flex items-center justify-center gap-1.5 transition-all duration-200 shadow-md shrink-0 cursor-pointer active:scale-95"
               >
                 <Search className="w-3.5 h-3.5" />
-                <span>Search</span>
+                <span >Search</span>
               </button>
             </div>
           </form>

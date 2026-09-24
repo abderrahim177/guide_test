@@ -14,8 +14,10 @@ use App\Http\Controllers\ReserveBookingController;
 use App\Http\Controllers\UpdateStatusController;
 use App\Http\Controllers\getGuideBookingsController;
 use App\Http\Controllers\GetInconfirmedBookingController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
+
 
 // 1. Authentication (Register & Login)
 Route::post('/register', [AuthController::class, 'save']);
@@ -34,6 +36,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/bookings/latest', [CheckStatusController::class, 'latestStatus']);
         Route::get('/materials' , [MaterialsController::class , 'getmaterials']);
         Route::get('/GetPaymentInformation' , [PaymentController::class , 'index']);
+        Route::get('/Notification' , [NotificationController::class , 'index']);
+        Route::patch('/make_is_read' , [NotificationController::class , 'is_read']);
     }); 
     // Admin / Provider (Role 2)
     Route::middleware(RoleMiddleware::class . ':2')->group(function () {

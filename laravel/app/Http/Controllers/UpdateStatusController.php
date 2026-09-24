@@ -1,12 +1,9 @@
 <?php
-
-
-
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
+use App\Models\Notificatiion;
 use Illuminate\Http\Request;
-
 class UpdateStatusController extends Controller
 {
     public function update(Request $request, $id)
@@ -19,12 +16,20 @@ class UpdateStatusController extends Controller
         $booking->update([
             'status' => $validated['status'],
         ]);
+
+        Notificatiion::create([
+            'user_id' => $booking->user_id, 
+            'message' => 'Booking status Confirmed by guide successfully you can now continue your reservation !',
+        ]);
+
         $booking->save();
+
         return response()->json([
             'message' => ' Booking status Confermer by guide successfully you can now continue your reservation !',
             'data'    => $booking
         ], 200);
     }
+
     public function refuser(Request $request, $id)
     {
         $refused = $request->validate([
@@ -36,7 +41,10 @@ class UpdateStatusController extends Controller
         $refuseBooking->update([
             'status' => $refused['status'],
         ]);
-
+        Notificatiion::create([
+            'user_id' => $refuseBooking->user_id, 
+            'message' => 'Booking status rejected by guide thank you for your visit !',
+        ]);
         return response()->json([
             'message' => 'Booking status rejected by guide thank you for your visit !',
             'data'    => $refuseBooking
