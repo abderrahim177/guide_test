@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 use App\Models\Booking;
 use App\Models\Notificatiion;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-
 class UpdateStatusController extends Controller
 {
     public function update(Request $request, $id)

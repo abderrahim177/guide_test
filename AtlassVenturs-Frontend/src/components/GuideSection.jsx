@@ -1,16 +1,57 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { MapPin, Languages, Star, CheckCircle2, ArrowRight } from 'lucide-react';
+import EmptyGuide from './EmptyGuides';
 import axios from 'axios';
+import Guide from './Guide';
 
-const staticImages = [
-  'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80',
-];
+const guideExample =   {
+            "id": 2,
+            "user_id": 13,
+            "region_id": 1,
+            "activity_id": 2,
+            "title": "",
+            "description": "",
+            "price_per_day": "230.00",
+            "created_at": null,
+            "updated_at": null,
+            "guide": {
+                "id": 13,
+                "name": "Nadia ElFassi",
+                "email": "NadiaElFassi@gmail.com",
+                "email_verified_at": null,
+                "role_id": 2,
+                "avatar": null,
+                "phone": "0661221329",
+                "bio": null,
+                "created_at": null,
+                "updated_at": "2026-09-17T09:21:11.000000Z"
+            },
+            "region": {
+                "id": 1,
+                "name": "bin_el_ouidane",
+                "description": null,
+                "image": null,
+                "created_at": null,
+                "updated_at": null
+            },
+            "activity": {
+                "id": 2,
+                "image": null,
+                "name": "camping",
+                "icon": null,
+                "created_at": null,
+                "updated_at": null
+            }
+        }
+/**
+ * @typedef {typeof guideExample} Guide
+ */
+
+
 
 export default function GuidesSection() {
-  const [data, setdata] = useState([]);
+  const [data, setdata] = useState([guideExample]);
   const [error, seterror] = useState('');
   const [loading, setloading] = useState(false);
   const navigate = useNavigate();
@@ -27,6 +68,7 @@ export default function GuidesSection() {
         },
       });
       const result = response.data.guides || [];
+      
       setdata(result);
       console.log(result);
     } catch (err) {
@@ -41,11 +83,22 @@ export default function GuidesSection() {
     GetGuides();
   }, []);
 
+  const [params] = useSearchParams()
+  const filter = {location:params.get('location')  , activity:params.get("activity")}
+  const filteredGuides = data.filter(guide=>{
+    if(!filter.location && !filter.activity) return true
+
+    const matchesActivity =  filter.activity === guide.activity.name
+    const matchesLocation =  filter.location === guide.region.name
+
+    return matchesActivity || matchesLocation 
+  })
+  
   const handleGuideClick = (guide) => {
     navigate(`/guides/${guide.id}`, { state: { guideData: guide } });
   };
   return (
-    <section className="w-full max-w-6xl mx-auto px-4 py-10 font-['Poppins',sans-serif] bg-[#FAF8F5]">
+    <section id='guides' className="w-full max-w-6xl mx-auto px-4 py-10 font-['Poppins',sans-serif] bg-[#FAF8F5]">
       {/* Top Header Section */}
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
         <div>
@@ -76,74 +129,16 @@ export default function GuidesSection() {
 
       {/* Guides Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {data.map((item, index) => {
-          const staticImage = staticImages[index % staticImages.length];
+        {filteredGuides.length === 0 ? (
+          <EmptyGuide />
+        ) : (
+          filteredGuides.map((item, index) => {
           return (
-            <div
-              key={item.id}
-              className="bg-white rounded-2xl border border-stone-200/90 overflow-hidden shadow-xs flex flex-col justify-between"
-            >
-              <div 
-                onClick={() => handleGuideClick(item)}
-                className="w-full h-64 bg-stone-100 overflow-hidden cursor-pointer group relative"
-              >
-                <img
-                  src={staticImage}
-                  alt={item.guide?.id}
-                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
-                />
-              </div>
-
-              {/* Details Section */}
-              <div className="p-5 flex-1 flex flex-col justify-between">
-                <div>
-                  {/* Header: Name + Verified Check */}
-                  <div className="flex items-center justify-between mb-0.5">
-                    <h3 
-                      onClick={() => handleGuideClick(item)}
-                      className="text-base font-bold text-[#1E3A2B] tracking-tight cursor-pointer hover:underline"
-                    >
-                      {item.guide?.name}
-                    </h3>
-                    <CheckCircle2 className="w-4 h-4 text-[#0284C7] fill-[#0284C7]/10 stroke-[2]" />
-                  </div>
-
-                  {/* Role / Activity Name */}
-                  <p className="text-xs text-stone-400 mb-4 capitalize">
-                    {item.activity?.name ? `${item.activity.name} Specialist` : 'Mountain Guide'}
-                  </p>
-
-                  {/* Location & Languages */}
-                  <div className="space-y-2 text-xs text-[#C86D44]">
-                    <div className="flex items-center gap-2">
-                      <MapPin className="w-3.5 h-3.5 shrink-0" />
-                      <span className="text-stone-700 capitalize">{item.region?.name}</span>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <Languages className="w-3.5 h-3.5 shrink-0" />
-                      <span className="text-stone-700">Arabic · French · English</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Footer: Price & Rating */}
-                <div className="mt-6 pt-4 border-t border-stone-100 flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-1.5 font-bold text-stone-900">
-                    <Star className="w-4 h-4 text-[#C86D44] fill-[#C86D44]" />
-                    <span>
-                      4.9 <span className="text-stone-400 font-normal">(38)</span>
-                    </span>
-                  </div>
-
-                  <span className="font-bold text-[#1E3A2B]">
-                    {item.price_per_day} MAD / day
-                  </span>
-                </div>
-              </div>
-            </div>
+           <Guide key={item.id} handleGuideClick={handleGuideClick} item={item} />
           );
-        })}
+        })
+        )}
+        
       </div>
     </section>
   );
