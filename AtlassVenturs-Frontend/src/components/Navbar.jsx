@@ -71,12 +71,13 @@ const Navbar = () => {
       const result = Array.isArray(response.data) 
         ? response.data 
         : response.data.data || [];
-
+      
       const formattedNotifs = result.map(n => ({
         ...n,
-        read: n.read || false 
+        is_read: Boolean(n.is_read) 
       }));
-
+      console.log(result);
+      
       setNotifications(formattedNotifs);
     } catch (err) {
       console.log(err);
@@ -84,7 +85,23 @@ const Navbar = () => {
       setLoader(false);
     }
   };
+  const markAllAsRead = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      
+      await axios.patch('http://127.0.0.1:8000/api/make_is_read', {}, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+        }
+      });
 
+      setNotifications(notifications.map((n) => ({ ...n, is_read: true })));
+      
+    } catch (err) {
+      console.error("Erreur lors du marquage des notifications:", err);
+    }
+  };
   useEffect(() => {
     checkBookingStatus();
     handelFetchData();
@@ -144,11 +161,7 @@ const Navbar = () => {
     }
   };
 
-  const unreadCount = notifications.filter((n) => !n.read).length;
-
-  const markAllAsRead = () => {
-    setNotifications(notifications.map((n) => ({ ...n, read: true })));
-  };
+  const unreadCount = notifications.filter((n) => !n.is_read).length;
 
   return (
     <header className="sticky top-0 left-0 w-full bg-[#FAF9F6] text-[#111612] px-6 py-2.5 flex items-center justify-between shadow-sm z-50 border-b border-gray-200/50">
