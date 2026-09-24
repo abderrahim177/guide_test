@@ -3,7 +3,7 @@ import { Compass, SearchX } from 'lucide-react';
 
 const EmptyState = ({ message, onReset }) => {
   return (
-    <div className="col-span-full flex flex-col items-center justify-center py-16 px-4 bg-white rounded-2xl border border-stone-200/60 shadow-sm my-6 text-center">
+    <div className="col-span-full flex flex-col items-center justify-center py-16 px-4  rounded-2xl   my-6 text-center">
       {/* Icon Container */}
       <div className="relative mb-4">
         <div className="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center text-[#1C3A27]">
