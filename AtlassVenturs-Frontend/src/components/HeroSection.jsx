@@ -67,11 +67,8 @@ const HeroSection = () => {
   }, []);
 
   const [params, setParams] = useSearchParams()
-
   function setSelectedLocation(location){
-    
-    setParams(prev=> {
-
+    setParams(prev => {
       if(!location) {
         prev.delete('location')
         return prev
@@ -80,8 +77,8 @@ const HeroSection = () => {
       return prev
     })
   }
+
   function selectedactivity (activity) {
-   
     setParams(prev => {
     if(!activity){
       prev.delete("activity")
@@ -91,8 +88,6 @@ const HeroSection = () => {
       return prev
     })
   }
-
-
   const handleScrollDown = () => {
     const guidesSection = document.getElementById("guides");
     if (guidesSection) {

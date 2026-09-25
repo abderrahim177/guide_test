@@ -84,6 +84,7 @@ export default function GuidesSection() {
   }, []);
 
   const [params] = useSearchParams()
+
   const filter = {location:params.get('location')  , activity:params.get("activity")}
   const filteredGuides = data.filter(guide=>{
     if(!filter.location && !filter.activity) return true
@@ -132,7 +133,7 @@ export default function GuidesSection() {
         {filteredGuides.length === 0 ? (
           <EmptyGuide />
         ) : (
-          filteredGuides.map((item, index) => {
+          filteredGuides.map((item) => {
           return (
            <Guide key={item.id} handleGuideClick={handleGuideClick} item={item} />
           );
