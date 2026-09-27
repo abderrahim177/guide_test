@@ -18,7 +18,6 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 
-
 // 1. Authentication (Register & Login)
 Route::post('/register', [AuthController::class, 'save']);
 Route::post('/login', [AuthController::class, 'check']);

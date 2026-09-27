@@ -5,53 +5,8 @@ import EmptyGuide from './EmptyGuides';
 import axios from 'axios';
 import Guide from './Guide';
 
-const guideExample =   {
-            "id": 2,
-            "user_id": 13,
-            "region_id": 1,
-            "activity_id": 2,
-            "title": "",
-            "description": "",
-            "price_per_day": "230.00",
-            "created_at": null,
-            "updated_at": null,
-            "guide": {
-                "id": 13,
-                "name": "Nadia ElFassi",
-                "email": "NadiaElFassi@gmail.com",
-                "email_verified_at": null,
-                "role_id": 2,
-                "avatar": null,
-                "phone": "0661221329",
-                "bio": null,
-                "created_at": null,
-                "updated_at": "2026-09-17T09:21:11.000000Z"
-            },
-            "region": {
-                "id": 1,
-                "name": "bin_el_ouidane",
-                "description": null,
-                "image": null,
-                "created_at": null,
-                "updated_at": null
-            },
-            "activity": {
-                "id": 2,
-                "image": null,
-                "name": "camping",
-                "icon": null,
-                "created_at": null,
-                "updated_at": null
-            }
-        }
-/**
- * @typedef {typeof guideExample} Guide
- */
-
-
-
 export default function GuidesSection() {
-  const [data, setdata] = useState([guideExample]);
+  const [data, setdata] = useState([]);
   const [error, seterror] = useState('');
   const [loading, setloading] = useState(false);
   const navigate = useNavigate();
@@ -86,7 +41,8 @@ export default function GuidesSection() {
   const [params] = useSearchParams()
 
   const filter = {location:params.get('location')  , activity:params.get("activity")}
-  const filteredGuides = data.filter(guide=>{
+  const filteredGuides = data.filter( guide=>{
+
     if(!filter.location && !filter.activity) return true
 
     const matchesActivity =  filter.activity === guide.activity.name

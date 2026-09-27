@@ -67,6 +67,7 @@ const HeroSection = () => {
   }, []);
 
   const [params, setParams] = useSearchParams()
+  
   function setSelectedLocation(location){
     setParams(prev => {
       if(!location) {

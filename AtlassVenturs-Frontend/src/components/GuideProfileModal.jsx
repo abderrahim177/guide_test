@@ -346,7 +346,7 @@ export default function GuideProfilePage() {
                         />
                       </div>
 
-                      <div className="space-y-3 pt-2">
+                      {/* <div className="space-y-3 pt-2">
                         <label className="block font-bold text-stone-800">
                           Payment Preference:
                         </label>
@@ -407,7 +407,7 @@ export default function GuideProfilePage() {
                             />
                           </div>
                         </div>
-                      </div>
+                      </div> */}
 
                       <div className="flex gap-3 pt-3">
                         <button

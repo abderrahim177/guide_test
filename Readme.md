@@ -132,3 +132,13 @@ npm run dev
 ## 📄 Licence
 
 Ce projet est développé dans le cadre de la valorisation du tourisme durable et solidaire à Azilal.
+
+<!-- ERDdiagramme -->
+![alt text](image.png)
+
+<!-- use case diagramme -->
+![alt text](image-1.png)
+
+<!-- class diagramme -->
+![alt text](image-2.png)
+
