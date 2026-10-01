@@ -12,6 +12,7 @@ export default function RegisterPage() {
   const [errors, setErrors] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
  const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({

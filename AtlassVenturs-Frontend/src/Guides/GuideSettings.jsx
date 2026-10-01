@@ -20,10 +20,15 @@ export default function GuideSettings() {
 
   // Profile State
   const [profile, setProfile] = useState({
-    name: "Ayoub Amrani",
-    bio: "Certified Mountain Guide with over 8 years of hiking experience across the High Atlas.",
+    name: "",
+    bio: "",
     language: "en", 
+
   });
+  const [languages , setLanguages] = useState({
+    title : '',
+    level : '',
+  })
 
   // Certifications State
   const [certifications, setCertifications] = useState([]);
@@ -95,7 +100,48 @@ export default function GuideSettings() {
     setProfile({ ...profile, [e.target.name]: e.target.value });
   };
 
+  const handeleLanguagesChange  = (e) => {
+    setLanguages({...languages, [e.target.name] : e.target.value})
+  }
+  const [message, setMessage] = useState(''); 
+  const [showAlert, setShowAlert] = useState(false);
+  const handelSubmitLanguage = async() =>  {
+    try{
+      const token = localStorage.getItem('token')
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/AddLanguages",
+        languages,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        }
+      );  
+      setLanguages({
+        title : '',
+        level : '',
+      })
+      const message = response.data.message;
+      setMessage(message)
+      setShowAlert(true)
 
+      setTimeout(() => {
+        setMessage('')
+        setError('')
+        setShowAlert(false)
+      }, 2000)
+    }catch (err) {
+      console.error('API Error:', err.response?.data || err.message);
+      setError(
+        err.response?.data?.message ||
+        " check your informations ! "
+      );
+    }finally{
+      setLoading(false)
+    }
+  }
   return (
     <div className="space-y-6 max-w-4xl pb-10">
       {/* Header */}
@@ -123,13 +169,73 @@ export default function GuideSettings() {
           {loading ? "Saving Changes..." : "Save Settings"}
         </button>
       </div>
-
-      
-
+      {showAlert && (
+        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4 transition-all duration-300">
+          {message}
+        </div>
+      )}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Left Column: Public Profile & Preferences */}
         <div className="md:col-span-2 space-y-6">
           {/* Section 1: Basic Information */}
+          <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+            <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
+             <Globe className="w-4 h-4 text-emerald-800" />
+              <h2 className="font-bold text-slate-900 text-sm">
+                Laguages Personel
+              </h2>
+            </div>
+            {error &&
+            <div className="bg-red-100 p-2 rounded-sm">
+              <p className="text-red-500 text-[10px] font-bold">◉ {error}</p>
+            </div>
+            }
+            <div className="space-y-1">
+              <label className="text-slate-700 font-semibold text-xs">
+                Title Language *
+              </label>
+              <input
+                type="text"
+                name="title"
+                value={languages.title}
+                onChange={handeleLanguagesChange}
+                placeholder="Describe your Language title (e.g. Arab)..."
+                className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-700/20 focus:border-emerald-700 font-medium"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-slate-700 font-semibold text-xs">
+                Level *
+              </label>
+              <input
+                type="number"
+                min={1}
+                max={5}
+                name="level"
+                value={languages.level}
+                onChange={handeleLanguagesChange}
+                placeholder="Describe your level in this language (e.g. 4)..."
+                className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-700/20 focus:border-emerald-700 font-medium resize-none"
+              />
+            </div>
+            <div className="flex items-center justify-between gap-2">
+                  <button
+                    onClick={handelSubmitLanguage}
+                    type="button"
+                    disabled={submittingCert}
+                    className="bg-slate-900 hover:bg-slate-800 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all active:scale-95 disabled:opacity-50"
+                  >
+                    {submittingCert ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    ) : (
+                      <Plus className="w-3.5 h-3.5" />
+                    )}
+                    {submittingCert ? "Adding..." : "Add"}
+                  </button>
+                </div>
+          </div>
+
           <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
             <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
               <User className="w-4 h-4 text-emerald-800" />
@@ -138,7 +244,7 @@ export default function GuideSettings() {
               </h2>
             </div>
 
-            <div className="space-y-1">
+            <div className="space-y-2">
               <label className="text-slate-700 font-semibold text-xs">
                 Full Name *
               </label>
@@ -147,11 +253,12 @@ export default function GuideSettings() {
                 name="name"
                 value={profile.name}
                 onChange={handleProfileChange}
+                placeholder="Describe your name here (e.g. Ahmed)"
                 className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-700/20 focus:border-emerald-700 font-medium"
               />
             </div>
 
-            <div className="space-y-1">
+            <div className="space-y-2">
               <label className="text-slate-700 font-semibold text-xs">
                 Bio & Presentation *
               </label>
@@ -165,7 +272,6 @@ export default function GuideSettings() {
               />
             </div>
           </div>
-
           {/* Section 2: Certifications */}
           <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
             <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
@@ -217,7 +323,11 @@ export default function GuideSettings() {
               <p className="text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-2">
                 Add New Certificate
               </p>
-              {error && <p className="text-xs text-red-500 font-bold mb-2">{error}</p>}
+              {error &&
+            <div className="bg-red-100 p-2 rounded-sm mb-1">
+              <p className="text-red-500 text-[10px] font-bold">◉ {error}</p>
+            </div>
+            }
               <div className="p-3.5 bg-slate-50/50 border border-dashed border-slate-200 rounded-xl space-y-3">
                 <div className="grid grid-cols-3 gap-2">
                   <input

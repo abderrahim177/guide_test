@@ -22,7 +22,7 @@ class AuthController extends Controller
             'name' => $credentials['name'],
             'email' => $credentials['email'],
             'password' => $credentials['password'],
-            'role_id' => $credentials['role_id'] ?? 1,
+            'role_id' => $credentials['role_id'] ?? 3,
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;

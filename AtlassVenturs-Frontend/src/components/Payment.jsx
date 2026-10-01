@@ -30,9 +30,7 @@ export default function CheckoutPage() {
           "Content-Type": "application/json",
         },
       });
-      
       setPaymentData(response.data);
-      console.log("Payment Info:", response.data);
     } catch (err) {
       console.error(err);
       if (err.response && err.response.status === 401) {
@@ -68,13 +66,17 @@ export default function CheckoutPage() {
     setIsSubmitted(true);
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center font-['Poppins',sans-serif] text-stone-500">
-        Loading payment details...
+  {loading &&
+      <div className="min-h-screen flex flex-col items-center justify-center bg-stone-50 font-['Poppins',sans-serif] space-y-4">
+        {/* Modern Spinner Animation */}
+        <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+        
+        {/* Modern Text Style */}
+        <p className="text-stone-600 font-medium text-lg tracking-wide animate-pulse">
+          chargement des payment...
+        </p>
       </div>
-    );
-  }
+    }
 
   if (isSubmitted) {
     return (

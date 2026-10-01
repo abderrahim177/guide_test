@@ -13,7 +13,6 @@ class NotificationController extends Controller
         $Notification = Notificatiion::where('user_id', Auth::id())->where('is_read' , false)->get();
         return response()->json($Notification, 200);
     }
-
     public function is_read(Request $request)
     {
         try {

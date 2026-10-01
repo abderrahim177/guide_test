@@ -78,4 +78,8 @@ class User extends Authenticatable
     public function notification(){
         return $this->hasMany(Notificatiion::class);
     }
+
+    public function Language(){
+        return $this->hasMany(Language::class);
+    }
 }

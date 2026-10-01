@@ -81,9 +81,17 @@ export default function GuidesSection() {
       </div>
 
       {/* Loading & Error States */}
-      {loading && <p className="text-center text-stone-500 py-6">Loading guides...</p>}
-      {error && <p className="text-center text-red-500 py-6">{error}</p>}
-
+      {loading &&
+      <div className="min-h-screen flex flex-col items-center justify-center bg-stone-50 font-['Poppins',sans-serif] space-y-4">
+        {/* Modern Spinner Animation */}
+        <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+        
+        {/* Modern Text Style */}
+        <p className="text-stone-600 font-medium text-lg tracking-wide animate-pulse">
+          chargement des guides...
+        </p>
+      </div>
+      }
       {/* Guides Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {filteredGuides.length === 0 ? (

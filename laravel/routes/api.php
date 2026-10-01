@@ -14,9 +14,11 @@ use App\Http\Controllers\ReserveBookingController;
 use App\Http\Controllers\UpdateStatusController;
 use App\Http\Controllers\getGuideBookingsController;
 use App\Http\Controllers\GetInconfirmedBookingController;
+use App\Http\Controllers\LanguagesController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TestController;
 
 // 1. Authentication (Register & Login)
 Route::post('/register', [AuthController::class, 'save']);
@@ -51,6 +53,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/Inconfirmed_Booking' , [GetInconfirmedBookingController::class , 'index']);
         Route::post('/AddCertificat' , [ProfileController::class , 'AddCertificat']); 
         Route::get('/GetAllCertificates' , [ProfileController::class , 'GetCertificates']);
+        Route::post('/AddLanguages', [LanguagesController::class , 'store']);
     }); 
     Route::post('/logout', [AuthController::class, 'logout']);
 });

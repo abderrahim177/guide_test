@@ -1,10 +1,4 @@
 import { CheckCircle2, Languages, MapPin, Star } from "lucide-react";
-
-const staticImages = [
-  "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80",
-];
 const Guide = ({ item, handleGuideClick }) => {
   return (
     <div className="bg-white rounded-2xl border border-stone-200/90 overflow-hidden shadow-xs flex flex-col justify-between">
@@ -13,12 +7,11 @@ const Guide = ({ item, handleGuideClick }) => {
         className="w-full h-64 bg-stone-100 overflow-hidden cursor-pointer group relative"
       >
         <img
-          src={staticImages[item.id % staticImages.length]}
+         src={`/images/${item.guide?.avatar}`}
           alt={item.guide?.id}
           className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
         />
       </div>
-
       {/* Details Section */}
       <div className="p-5 flex-1 flex flex-col justify-between">
         <div>

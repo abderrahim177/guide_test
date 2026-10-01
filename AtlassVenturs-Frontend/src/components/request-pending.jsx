@@ -16,7 +16,6 @@ const PendingRequestPage = () => {
 
   const guideData = location.state?.guideData || {};
   const bookingDetails = location.state?.bookingDetails || {};
-    console.log(guideData);
   const [isApproved, setIsApproved] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -40,7 +39,6 @@ const PendingRequestPage = () => {
       if (status === "confirmed") {
         setIsApproved(true);
       }
-      console.log(response.data);
     } catch (err) {
       console.error(
         "Erreur lors de la vérification:",
@@ -63,7 +61,6 @@ const PendingRequestPage = () => {
       },
     });
   };
-
   return (
     <>
       {loading ? (

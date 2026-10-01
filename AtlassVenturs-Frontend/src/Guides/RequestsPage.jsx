@@ -21,18 +21,21 @@ export default function RequestsPage() {
   const fetchRequests = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://127.0.0.1:8000/api/GetAllBooking', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: "application/json",
-          "Content-Type": "application/json",
+      const response = await axios.get(
+        "http://127.0.0.1:8000/api/GetAllBooking",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
         },
-      });
+      );
       const bookingsData = Array.isArray(response.data)
         ? response.data
         : response.data.data || [];
-        console.log(bookingsData);
-        
+      console.log(bookingsData);
+
       setRequests(bookingsData);
     } catch (err) {
       console.error(err);
@@ -51,10 +54,12 @@ export default function RequestsPage() {
       await axios.patch(
         `http://127.0.0.1:8000/api/bookings/${id}/status`,
         { status: "confirmed" },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
       setRequests((prev) =>
-        prev.map((req) => (req.id === id ? { ...req, status: "confirmed" } : req))
+        prev.map((req) =>
+          req.id === id ? { ...req, status: "confirmed" } : req,
+        ),
       );
     } catch (err) {
       console.error("Failed to confirm booking", err);
@@ -66,16 +71,18 @@ export default function RequestsPage() {
       await axios.patch(
         `http://127.0.0.1:8000/api/bookingsRefuse/${id}/status`,
         { status: "rejected" },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
 
       setRequests((prev) =>
-        prev.map((req) => (req.id === id ? { ...req, status: "rejected" } : req))
+        prev.map((req) =>
+          req.id === id ? { ...req, status: "rejected" } : req,
+        ),
       );
     } catch (err) {
       console.error("Failed to reject booking", err);
     }
-};
+  };
 
   return (
     <div className="space-y-6">
@@ -86,7 +93,8 @@ export default function RequestsPage() {
             Booking Requests
           </h1>
           <p className="text-slate-500 text-xs">
-            Review incoming requests, contact visitors, and confirm reservations.
+            Review incoming requests, contact visitors, and confirm
+            reservations.
           </p>
         </div>
       </div>
@@ -102,7 +110,11 @@ export default function RequestsPage() {
               Pending
             </p>
             <h3 className="text-lg font-bold text-slate-900">
-              {requests.filter((r) => (r.status || "pending") === "pending").length} Requests
+              {
+                requests.filter((r) => (r.status || "pending") === "pending")
+                  .length
+              }{" "}
+              Requests
             </h3>
           </div>
         </div>
@@ -130,14 +142,19 @@ export default function RequestsPage() {
               Total Hikers
             </p>
             <h3 className="text-lg font-bold text-slate-900">
-              {requests.reduce((sum, req) => sum + (Number(req.group_size) || 1), 0)} Travelers
+              {requests.reduce(
+                (sum, req) => sum + (Number(req.group_size) || 1),
+                0,
+              )}{" "}
+              Travelers
             </h3>
           </div>
         </div>
       </div>
 
-      {loading && <p className="text-xs text-slate-500">Loading requests...</p>}
-      {error && <p className="text-xs text-red-500">Error fetching requests.</p>}
+      {error && (
+        <p className="text-xs text-red-500">Error fetching requests.</p>
+      )}
 
       {/* Requests Table */}
       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
@@ -162,9 +179,23 @@ export default function RequestsPage() {
             <tbody className="divide-y divide-slate-100 font-medium">
               {requests.map((req) => {
                 const currentStatus = req.status || "pending";
+                {loading && (
+                    <div className="min-h-screen flex flex-col items-center justify-center bg-stone-50 font-['Poppins',sans-serif] space-y-4">
+                      {/* Modern Spinner Animation */}
+                      <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
 
+                      {/* Modern Text Style */}
+                      <p className="text-stone-600 font-medium text-lg tracking-wide animate-pulse">
+                        loading requests...
+                      </p>
+                    </div>
+                  );
+                }
                 return (
-                  <tr key={req.id} className="hover:bg-slate-50/60 transition-colors">
+                  <tr
+                    key={req.id}
+                    className="hover:bg-slate-50/60 transition-colors"
+                  >
                     <td className="p-3.5">
                       <div className="font-bold text-slate-900">
                         {req.client?.name || req.visitorName || "Client"}
@@ -176,11 +207,16 @@ export default function RequestsPage() {
                     <td className="p-3.5">
                       <div className="flex items-center gap-1 text-slate-800 font-semibold">
                         <MapPin className="w-3.5 h-3.5 text-emerald-600" />
-                        {req.program?.title || req.program?.name || req.place || "Destination"}
+                        {req.program?.title ||
+                          req.program?.name ||
+                          req.place ||
+                          "Destination"}
                       </div>
                       <div className="flex items-center gap-1 text-[10px] text-slate-500 mt-0.5">
                         <Calendar className="w-3 h-3 text-slate-400" />
-                        {req.start_date ? `${req.start_date} to ${req.end_date}` : req.date}
+                        {req.start_date
+                          ? `${req.start_date} to ${req.end_date}`
+                          : req.date}
                       </div>
                     </td>
                     <td className="p-3.5">
@@ -198,14 +234,12 @@ export default function RequestsPage() {
                             <Phone className="w-3.5 h-3.5" />
                           </a>
                         )}
-                      
                       </div>
                     </td>
                     <td className="p-3.5">
-                      
-                        <span className="inline-flex items-center gap-1 bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5 rounded-full text-[10px] font-semibold">
-                          {req.status}
-                        </span>
+                      <span className="inline-flex items-center gap-1 bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5 rounded-full text-[10px] font-semibold">
+                        {req.status}
+                      </span>
                     </td>
                     <td className="p-3.5 text-right">
                       {currentStatus === "pending" ? (
@@ -225,7 +259,7 @@ export default function RequestsPage() {
                         </div>
                       ) : (
                         <span className="text-[10px] text-slate-400 font-normal">
-                          Completed
+                          {loading ? ` loading...` : `Completed`}
                         </span>
                       )}
                     </td>

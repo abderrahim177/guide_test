@@ -43,11 +43,6 @@ export default function PlatformTrustSection() {
       desc: "Comprehensive itineraries exploring Ait Bouguemez, Zaouiat Ahansal, Taghia Canyons, and Ouzoud Waterfalls.",
     },
     {
-      icon: Sparkles,
-      title: "Technical Gear Rental",
-      desc: "Option to rent high-quality tents, sleeping bags, and trekking poles directly with your booking.",
-    },
-    {
       icon: Users,
       title: "Authentic Atlas Cultural Experiences",
       desc: "Savor local cuisine and stay in traditional gîtes to truly connect with Amazigh culture.",
@@ -62,7 +57,7 @@ export default function PlatformTrustSection() {
         <div className="space-y-10">
           <div className="text-center max-w-2xl mx-auto space-y-3">
             <span className="inline-flex items-center gap-1.5 bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
-              <Sparkles className="w-3.5 h-3.5" />
+              
               Why AtlasVenture?
             </span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-stone-900 tracking-tight">

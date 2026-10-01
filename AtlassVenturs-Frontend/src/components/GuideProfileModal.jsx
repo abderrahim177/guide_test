@@ -20,10 +20,10 @@ export default function GuideProfilePage() {
   const location = useLocation();
 
   const passedGuideData = location.state?.guideData;
-  console.log(passedGuideData);
   const guidePhone = passedGuideData.guide.phone;
   const [guideData] = useState(passedGuideData || null);
   const [loadingGuide] = useState(!passedGuideData);
+
 
   const guide = {
     id: guideData?.id,
@@ -36,7 +36,7 @@ export default function GuideProfilePage() {
     languages: "Arabic, Tamazight, French, English",
     rating: 4.9,
     reviews: 38,
-    image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800",
+    image:`/images/${guideData.guide?.avatar}`,
   };
 
   const todayStr = new Date().toISOString().split("T")[0];
@@ -48,7 +48,6 @@ export default function GuideProfilePage() {
   // Interactive UI States
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [step, setStep] = useState("checkout");
-  const [paymentMethod, setPaymentMethod] = useState("deposit");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [formadata, setFormadata] = useState({
@@ -133,6 +132,13 @@ export default function GuideProfilePage() {
       setLoading(false);
     }
   };
+  const handleReserveClick = () => {
+    const token = localStorage.getItem('token')
+    if(!token){
+      navigate('/login')
+      return
+    }
+  }
 
   if (loadingGuide) {
     return (
@@ -418,6 +424,7 @@ export default function GuideProfilePage() {
                           Cancel
                         </button>
                         <button
+                          onClick={handleReserveClick}
                           type="submit"
                           disabled={loading}
                           className="w-2/3 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold transition-all shadow-md active:scale-98 cursor-pointer disabled:opacity-50"

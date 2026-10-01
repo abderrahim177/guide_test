@@ -6,11 +6,11 @@ export default function LoginPage() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    remember: false,
   });
   const [error, seterror] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
@@ -129,7 +129,11 @@ export default function LoginPage() {
                 Ravi de vous revoir ! Connectez-vous à votre compte.
               </p>
             </div>
-            {error && <p>{error}</p>}
+            {error &&
+            <div className="bg-red-100 p-2 rounded-sm">
+              <p className="text-red-600 text-[12px] font-bold">◉ {error}</p>
+            </div>
+            }
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Email Field */}
