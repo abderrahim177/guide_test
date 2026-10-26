@@ -12,14 +12,16 @@ use Illuminate\Support\Facades\DB;
 
 class MaterialsController extends Controller
 {
-
     public function getmaterials(Request $request){
         $Equipments = GuideEquipment::with(['equipment', 'guide'])->get();
-        return response()->json($Equipments, 200);
+        return response()->json($Equipments,200);
     }
-
     public function getActivities(Request $request){
         $Activities = Activity::all();
         return response()->json($Activities , 200);
     }
 }
+
+
+
+

@@ -63,7 +63,6 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
-
   return (
     <div className="min-h-[85vh] bg-slate-100 flex items-center justify-center p-4 sm:p-6 font-sans">
       <div className="bg-white w-full max-w-4xl rounded-3xl shadow-2xl border border-slate-200/60 overflow-hidden flex flex-col md:flex-row min-h-[550px]">

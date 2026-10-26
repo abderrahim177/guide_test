@@ -27,7 +27,6 @@ const handelFetchdata = async (e) => {
     });
     const bookingsData = Array.isArray(response.data) ? response.data : (response.data.data || []);
     setdata(bookingsData);
-    console.log(bookingsData);
   } catch (err) {
     console.error(err);
     seterror(err);

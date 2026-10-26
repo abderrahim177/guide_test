@@ -23,7 +23,7 @@ class CreatEquipmentsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required',
+           'name' => 'required',
             'description' => 'required',
             'price' => 'required',
             'stock' => 'required|min:1', 
